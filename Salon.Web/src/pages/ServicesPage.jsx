@@ -46,13 +46,23 @@ const ServicesPage = () => {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10">
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="font-display text-4xl font-semibold text-neutral-900 dark:text-white">
-            Our Services
+          <div className="mb-3 flex items-center gap-3 text-gold-600 dark:text-gold-400">
+            <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500" />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.35em]">
+              Treatments
+            </span>
+          </div>
+          <h1 className="font-display text-5xl font-semibold leading-tight text-neutral-900 dark:text-white md:text-6xl">
+            Our{' '}
+            <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
+              Services
+            </span>
           </h1>
-          <p className="mt-2 max-w-xl text-neutral-600 dark:text-neutral-300">
-            Browse, filter and book the beauty treatments offered at HAPPINESS.
+          <p className="mt-4 max-w-xl text-neutral-600 dark:text-neutral-300">
+            Browse, filter and book the beauty treatments offered at HAPPINESS — each
+            one crafted with care and a touch of gold.
           </p>
         </div>
         <Button onClick={() => setFormOpen(true)}>

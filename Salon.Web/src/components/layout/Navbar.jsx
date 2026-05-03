@@ -15,12 +15,19 @@ const Navbar = () => {
   const { isDark, toggleMode } = useThemeContext();
 
   return (
-    <header className="sticky top-0 z-sticky border-b border-neutral-200/70 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/80">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <NavLink to="/" className="flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary-500" />
-          <span className="font-display text-xl font-semibold tracking-wide">
-            HAPPINESS <span className="text-primary-500">Beauty Salon</span>
+    <header className="sticky top-0 z-sticky border-b border-gold-300/70 bg-neutral-50/85 backdrop-blur-md dark:border-gold-700/50 dark:bg-neutral-950/85">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        <NavLink to="/" className="group flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gold-400 to-gold-600 shadow-soft ring-2 ring-gold-200/60 dark:ring-gold-700/40">
+            <Sparkles className="h-5 w-5 text-white" />
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="font-display text-xl font-semibold tracking-[0.18em] text-neutral-800 dark:text-neutral-50">
+              HAPPINESS
+            </span>
+            <span className="font-display text-[11px] italic tracking-[0.35em] text-gold-600 dark:text-gold-400">
+              beauty · salon
+            </span>
           </span>
         </NavLink>
 
@@ -31,10 +38,12 @@ const Navbar = () => {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                `relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-200'
-                    : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white'
+                    ? 'text-gold-700 dark:text-gold-300'
+                    : 'text-neutral-600 hover:text-gold-700 dark:text-neutral-300 dark:hover:text-gold-300'
+                } after:absolute after:left-1/2 after:bottom-0 after:h-0.5 after:w-0 after:-translate-x-1/2 after:rounded-full after:bg-gradient-to-r after:from-gold-400 after:to-gold-600 after:transition-all hover:after:w-6 ${
+                  isActive ? 'after:w-6' : ''
                 }`
               }
             >
@@ -47,7 +56,7 @@ const Navbar = () => {
           type="button"
           onClick={toggleMode}
           aria-label="Toggle color theme"
-          className="rounded-full border border-neutral-200 p-2 text-neutral-600 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
+          className="rounded-full border border-gold-300/70 bg-white/70 p-2 text-gold-700 transition-colors hover:bg-gold-50 dark:border-gold-700/50 dark:bg-neutral-900/70 dark:text-gold-300 dark:hover:bg-neutral-800"
         >
           {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
