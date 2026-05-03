@@ -1,0 +1,21 @@
+name: salon-web-staging
+
+services:
+  web:
+    build:
+      context: ./Salon.Web
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        MODE: staging
+    image: salon-web:staging
+    container_name: salon-web-staging
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
