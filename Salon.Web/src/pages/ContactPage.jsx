@@ -78,10 +78,10 @@ const ContactPage = () => {
                 </h3>
               </div>
               <a
-                href="tel:+37322123456"
+                href="tel:+40754629321"
                 className="mt-3 block text-sm font-medium text-gold-700 transition-colors hover:text-gold-500 dark:text-gold-300"
               >
-                +373 22 123 456
+                +40 754 629 321
               </a>
               <a
                 href="mailto:hello@happiness-salon.md"
@@ -227,9 +227,11 @@ const ContactPage = () => {
             <Card className="overflow-hidden">
               <iframe
                 title="HAPPINESS Salon location"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=28.825%2C47.020%2C28.870%2C47.040&amp;layer=mapnik"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2733.1842671163613!2d23.60354287654807!3d46.761264245968384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xa5e3fe6fc6dea549%3A0x32969aa1cad851b2!2sS.C.%20Happiness%20S.R.L!5e0!3m2!1sen!2s!4v1777827663498!5m2!1sen!2s"
                 className="h-[320px] w-full border-0"
                 loading="lazy"
+                allowFullScreen=""
+                referrerPolicy="no-referrer-when-downgrade"
               />
             </Card>
           </div>

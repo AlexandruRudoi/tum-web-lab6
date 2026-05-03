@@ -105,7 +105,7 @@ const HomePage = () => {
             const s = translateService(raw, t);
             return (
             <Card key={s.id} className="overflow-hidden">
-              <CardMedia src={s.image} alt={s.name} kind="service" className="h-44" />
+              <CardMedia src={s.image} alt={s.name} kind="service" />
               <div className="p-5">
                 <h3 className="font-display text-xl font-semibold text-neutral-900 dark:text-white">
                   {s.name}
@@ -154,7 +154,7 @@ const HomePage = () => {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featuredProducts.map((p) => (
             <Card key={p.id} className="overflow-hidden">
-              <CardMedia src={p.image} alt={p.name} kind="product" className="h-44" />
+              <CardMedia src={p.image} alt={p.name} kind="product" />
               <div className="p-5">
                 <h3 className="font-display text-xl font-semibold text-neutral-900 dark:text-white">
                   {p.name}
@@ -203,7 +203,7 @@ const HomePage = () => {
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {latestNews.map((n) => (
             <Card key={n.id} className="overflow-hidden">
-              <CardMedia src={n.image} alt={n.title} kind="news" className="h-56" />
+              <CardMedia src={n.image} alt={n.title} kind="news" />
               <div className="p-6">
                 <div className="flex items-center gap-2">
                   <span className="rounded-full bg-gold-50 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-700 dark:bg-gold-900/40 dark:text-gold-300">

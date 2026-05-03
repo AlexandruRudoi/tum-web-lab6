@@ -8,7 +8,7 @@ export const seedNews = () => [
     category: 'Promotion',
     content:
       'Refresh your look this spring! Enjoy 20% off all haircuts and coloring services until the end of April.',
-    image: 'https://picsum.photos/seed/news-spring/1200/600',
+    image: '/images/news/spring_promotion.webp',
     pinned: true,
     liked: false,
     createdAt: nowIso(),
@@ -19,7 +19,7 @@ export const seedNews = () => [
     category: 'Announcement',
     content:
       'We are excited to welcome Maria, our new senior hair stylist with 10+ years of experience.',
-    image: 'https://picsum.photos/seed/news-stylist/1200/600',
+    image: '/images/news/stylist.jpg',
     pinned: false,
     liked: false,
     createdAt: nowIso(),

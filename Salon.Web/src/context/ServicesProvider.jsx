@@ -19,6 +19,20 @@ const NAME_TO_KEY = {
   'Eyebrow Shaping': 'eyebrowShaping',
 };
 
+// Backfill local image paths for cached entries that still reference
+// the old picsum placeholders or have no image at all.
+const KEY_TO_IMAGE = {
+  signatureHaircut: '/images/services/signature_haircut.jpg',
+  hairColoring: '/images/services/hair_coloring.jpg',
+  classicManicure: '/images/services/classic_manicure.jpg',
+  spaPedicure: '/images/services/spa_pedicure.jpg',
+  eveningMakeup: '/images/services/evening_makeup.jpg',
+  hydratingFacial: '/images/services/hydrating_facial.jpg',
+  eyebrowShaping: '/images/services/eyebrow_shaping.jpg',
+};
+
+const needsImageBackfill = (img) => !img || img.includes('picsum.photos');
+
 export const ServicesProvider = ({ children }) => {
   const state = useEntityState(STORAGE_KEYS.SERVICES, seedServices);
   const migrated = useRef(false);
@@ -26,14 +40,24 @@ export const ServicesProvider = ({ children }) => {
   useEffect(() => {
     if (migrated.current) return;
     migrated.current = true;
-    const needsBackfill = state.items.some(
-      (s) => !s.i18nKey && NAME_TO_KEY[s.name],
-    );
+    const needsBackfill = state.items.some((s) => {
+      const key = s.i18nKey || NAME_TO_KEY[s.name];
+      if (!s.i18nKey && key) return true;
+      if (key && KEY_TO_IMAGE[key] && needsImageBackfill(s.image)) return true;
+      return false;
+    });
     if (!needsBackfill) return;
     state.setItems((prev) =>
-      prev.map((s) =>
-        !s.i18nKey && NAME_TO_KEY[s.name] ? { ...s, i18nKey: NAME_TO_KEY[s.name] } : s,
-      ),
+      prev.map((s) => {
+        const key = s.i18nKey || NAME_TO_KEY[s.name];
+        if (!key) return s;
+        const next = { ...s };
+        if (!s.i18nKey) next.i18nKey = key;
+        if (KEY_TO_IMAGE[key] && needsImageBackfill(s.image)) {
+          next.image = KEY_TO_IMAGE[key];
+        }
+        return next;
+      }),
     );
   }, [state]);
 

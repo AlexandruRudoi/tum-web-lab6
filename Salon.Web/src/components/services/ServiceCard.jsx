@@ -8,7 +8,7 @@ const ServiceCard = ({ service, onToggleLike, onRemove, onBook }) => {
   const { t } = useTranslation();
   return (
     <Card className="flex h-full flex-col overflow-hidden">
-      <CardMedia src={service.image} alt={service.name} kind="service" className="h-44" />
+      <CardMedia src={service.image} alt={service.name} kind="service" />
       <div className="flex items-start justify-between p-5 pb-3">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-300/70 bg-gold-50 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-700 dark:border-gold-700/50 dark:bg-gold-900/30 dark:text-gold-300">
