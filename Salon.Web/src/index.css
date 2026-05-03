@@ -3,6 +3,90 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  /* Brand: blush / soft pink (secondary use) */
+  --color-primary-50:  #FDF4F0;
+  --color-primary-100: #FAE4DC;
+  --color-primary-200: #F2C7B7;
+  --color-primary-300: #E5A38C;
+  --color-primary-400: #D88571;
+  --color-primary-500: #C26B5A; /* terracotta blush */
+  --color-primary-600: #A4584A;
+  --color-primary-700: #82453B;
+  --color-primary-800: #5E322B;
+  --color-primary-900: #3C201B;
+
+  /* Rose-gold accent */
+  --color-accent-50:  #FBF1ED;
+  --color-accent-100: #F1DBD0;
+  --color-accent-200: #E2B7A2;
+  --color-accent-300: #CE927A;
+  --color-accent-400: #BC7864;
+  --color-accent-500: #B76E79; /* signature rose-gold */
+  --color-accent-600: #9C5C66;
+  --color-accent-700: #7C4953;
+  --color-accent-800: #5A363D;
+  --color-accent-900: #392227;
+
+  /* Gold — the hero color */
+  --color-gold-50:  #FBF6E9;
+  --color-gold-100: #F5EAC8;
+  --color-gold-200: #ECD799;
+  --color-gold-300: #DFBE6A;
+  --color-gold-400: #D1A648;
+  --color-gold-500: #B8862B; /* antique gold */
+  --color-gold-600: #976E22;
+  --color-gold-700: #75561C;
+  --color-gold-800: #553F15;
+  --color-gold-900: #36280D;
+
+  /* Warm ivory neutrals */
+  --color-neutral-0:   #FFFFFF;
+  --color-neutral-50:  #FFFCF5; /* ivory */
+  --color-neutral-100: #FAF3E2; /* champagne cream */
+  --color-neutral-200: #EDE0C5;
+  --color-neutral-300: #D6C4A1;
+  --color-neutral-400: #A89673;
+  --color-neutral-500: #786A4F;
+  --color-neutral-600: #574B36;
+  --color-neutral-700: #3D3424;
+  --color-neutral-800: #261F13;
+  --color-neutral-900: #181308;
+  --color-neutral-950: #0C0905;
+
+  /* Status */
+  --color-status-pending:   #F59E0B;
+  --color-status-confirmed: #10B981;
+  --color-status-cancelled: #EF4444;
+  --color-status-completed: #6366F1;
+
+  /* Typography */
+  --font-sans: 'Poppins', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+
+  /* Shadows — antique gold tinted */
+  --shadow-soft:       0 2px 10px rgba(184, 134, 43, 0.12);
+  --shadow-card:       0 6px 20px rgba(86, 64, 20, 0.08);
+  --shadow-cardHover:  0 16px 36px rgba(184, 134, 43, 0.22);
+  --shadow-elevated:   0 22px 48px rgba(86, 64, 20, 0.18);
+
+  /* Z-index scale */
+  --z-base:     0;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+
+  /* Animations */
+  --animate-fadeIn: fadeIn 0.3s ease-in-out;
+
+  @keyframes fadeIn {
+    0%   { opacity: 0; transform: translateY(-8px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}
+
 :root {
   color-scheme: light;
 }
@@ -19,12 +103,21 @@ body,
 
 body {
   font-family: 'Poppins', system-ui, sans-serif;
-  background-color: #fff8fa;
-  color: #18181b;
+  color: #261F13;
   -webkit-font-smoothing: antialiased;
+  background-color: #FFFCF5;
+  background-image:
+    radial-gradient(at 10% 0%, rgba(220, 190, 106, 0.18) 0px, transparent 55%),
+    radial-gradient(at 90% 8%, rgba(183, 110, 121, 0.12) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(184, 134, 43, 0.10) 0px, transparent 60%);
+  background-attachment: fixed;
 }
 
 html.dark body {
-  background-color: #0b0b0e;
-  color: #f4f4f5;
+  color: #FAF3E2;
+  background-color: #181308;
+  background-image:
+    radial-gradient(at 10% 0%, rgba(184, 134, 43, 0.20) 0px, transparent 55%),
+    radial-gradient(at 90% 8%, rgba(183, 110, 121, 0.16) 0px, transparent 55%),
+    radial-gradient(at 50% 100%, rgba(220, 190, 106, 0.10) 0px, transparent 60%);
 }
