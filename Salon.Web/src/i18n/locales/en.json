@@ -217,5 +217,42 @@
     "serviceRequired": "Choose a service",
     "dateRequired": "Pick a date",
     "timeRequired": "Pick a time"
+  },
+  "categories": {
+    "hair": "Hair",
+    "nails": "Nails",
+    "makeup": "Makeup",
+    "skincare": "Skincare",
+    "browsLashes": "Brows & Lashes"
+  },
+  "servicesData": {
+    "signatureHaircut": {
+      "name": "Signature Haircut",
+      "description": "Personalized haircut with consultation, wash and styling."
+    },
+    "hairColoring": {
+      "name": "Hair Coloring",
+      "description": "Full hair coloring with premium professional dyes."
+    },
+    "classicManicure": {
+      "name": "Classic Manicure",
+      "description": "Nail shaping, cuticle care and polish."
+    },
+    "spaPedicure": {
+      "name": "Spa Pedicure",
+      "description": "Relaxing pedicure with foot mask and massage."
+    },
+    "eveningMakeup": {
+      "name": "Evening Makeup",
+      "description": "Glamorous makeup look for evenings and special events."
+    },
+    "hydratingFacial": {
+      "name": "Hydrating Facial",
+      "description": "Deep cleansing and hydration treatment for glowing skin."
+    },
+    "eyebrowShaping": {
+      "name": "Eyebrow Shaping",
+      "description": "Eyebrow design with tweezing, waxing and tinting."
+    }
   }
 }

@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useServices } from '../context/useEntityContexts';
 import { useFilterSearch } from '../hooks/useFilterSearch';
 import { SERVICE_CATEGORIES } from '../data/entities';
+import { CAN_MANAGE } from '../config/permissions';
+import { translateService, translateCategory } from '../i18n/translateEntity';
 import SearchBar from '../components/common/SearchBar';
 import CategoryFilter from '../components/common/CategoryFilter';
 import EmptyState from '../components/common/EmptyState';
@@ -66,10 +68,12 @@ const ServicesPage = () => {
             {t('services.subtitle')}
           </p>
         </div>
-        <Button onClick={() => setFormOpen(true)}>
-          <Plus className="h-4 w-4" />
-          {t('services.addBtn')}
-        </Button>
+        {CAN_MANAGE && (
+          <Button onClick={() => setFormOpen(true)}>
+            <Plus className="h-4 w-4" />
+            {t('services.addBtn')}
+          </Button>
+        )}
       </div>
 
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
@@ -82,6 +86,7 @@ const ServicesPage = () => {
             value={category}
             onChange={setCategory}
             label={t('common.all')}
+            getLabel={(c) => translateCategory(c, t)}
           />
         </div>
         <Button
@@ -100,10 +105,12 @@ const ServicesPage = () => {
           title={t('services.emptyTitle')}
           description={t('services.emptyDescription')}
           action={
-            <Button onClick={() => setFormOpen(true)}>
-              <Plus className="h-4 w-4" />
-              {t('services.addBtn')}
-            </Button>
+            CAN_MANAGE ? (
+              <Button onClick={() => setFormOpen(true)}>
+                <Plus className="h-4 w-4" />
+                {t('services.addBtn')}
+              </Button>
+            ) : null
           }
         />
       ) : (
@@ -111,10 +118,10 @@ const ServicesPage = () => {
           {filtered.map((service) => (
             <ServiceCard
               key={service.id}
-              service={service}
-              onToggleLike={toggleLike}
-              onRemove={() => setPendingDelete(service)}
-              onBook={handleBook}
+              service={translateService(service, t)}
+              onToggleLike={() => toggleLike(service.id)}
+              onRemove={CAN_MANAGE ? () => setPendingDelete(service) : undefined}
+              onBook={() => handleBook(service)}
             />
           ))}
         </div>

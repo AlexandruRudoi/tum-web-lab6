@@ -4,6 +4,7 @@ import { CalendarPlus, Clock, User, Phone, Trash2, CheckCircle2, XCircle } from 
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useBookings, useServices } from '../context/useEntityContexts';
+import { translateService } from '../i18n/translateEntity';
 import { BOOKING_STATUS } from '../data/entities';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -153,11 +154,14 @@ const BookingPage = () => {
                 onChange={update('serviceId')}
               >
                 <option value="">{t('booking.chooseService')}</option>
-                {services.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} · {s.price} {currency}
-                  </option>
-                ))}
+                {services.map((s) => {
+                  const ts = translateService(s, t);
+                  return (
+                    <option key={s.id} value={s.id}>
+                      {ts.name} · {s.price} {currency}
+                    </option>
+                  );
+                })}
               </select>
               {errors.serviceId && <p className={errorClass}>{errors.serviceId}</p>}
             </div>
@@ -216,6 +220,7 @@ const BookingPage = () => {
             <div className="space-y-4">
               {sortedBookings.map((b) => {
                 const svc = serviceMap[b.serviceId];
+                const tsvc = svc ? translateService(svc, t) : null;
                 return (
                   <Card key={b.id} className="p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -231,7 +236,7 @@ const BookingPage = () => {
                           </span>
                         </div>
                         <h3 className="mt-2 font-display text-lg font-semibold text-neutral-900 dark:text-white">
-                          {svc ? svc.name : t('booking.serviceRemoved')}
+                          {tsvc ? tsvc.name : t('booking.serviceRemoved')}
                         </h3>
                         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-neutral-300">
                           <span className="flex items-center gap-1.5">

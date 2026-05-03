@@ -217,5 +217,42 @@
     "serviceRequired": "Alege un serviciu",
     "dateRequired": "Alege o dată",
     "timeRequired": "Alege o oră"
+  },
+  "categories": {
+    "hair": "Păr",
+    "nails": "Unghii",
+    "makeup": "Machiaj",
+    "skincare": "Îngrijire ten",
+    "browsLashes": "Sprâncene & gene"
+  },
+  "servicesData": {
+    "signatureHaircut": {
+      "name": "Tunsoare semnătură",
+      "description": "Tunsoare personalizată cu consultație, spălare și coafare."
+    },
+    "hairColoring": {
+      "name": "Vopsire păr",
+      "description": "Vopsire completă a părului cu vopsele profesionale premium."
+    },
+    "classicManicure": {
+      "name": "Manichiură clasică",
+      "description": "Modelarea unghiilor, îngrijirea cuticulei și ojă."
+    },
+    "spaPedicure": {
+      "name": "Pedichiură SPA",
+      "description": "Pedichiură relaxantă cu mască pentru picioare și masaj."
+    },
+    "eveningMakeup": {
+      "name": "Machiaj de seară",
+      "description": "Machiaj glamour pentru seri și ocazii speciale."
+    },
+    "hydratingFacial": {
+      "name": "Tratament facial hidratant",
+      "description": "Curățare profundă și hidratare pentru un ten luminos."
+    },
+    "eyebrowShaping": {
+      "name": "Modelare sprâncene",
+      "description": "Designul sprâncenelor cu pensă, ceară și vopsire."
+    }
   }
 }

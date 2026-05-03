@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight, Scissors, ShoppingBag, Newspaper, CalendarPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useServices, useProducts, useNews } from '../context/useEntityContexts';
+import { translateService } from '../i18n/translateEntity';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { formatDate } from '../utils/date';
@@ -99,7 +100,9 @@ const HomePage = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredServices.map((s) => (
+          {featuredServices.map((raw) => {
+            const s = translateService(raw, t);
+            return (
             <Card key={s.id} className="p-5">
               <Scissors className="h-6 w-6 text-gold-600" />
               <h3 className="mt-3 font-display text-xl font-semibold text-neutral-900 dark:text-white">
@@ -118,7 +121,8 @@ const HomePage = () => {
                 </Link>
               </div>
             </Card>
-          ))}
+            );
+          })}
         </div>
       </section>
 

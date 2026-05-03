@@ -1,7 +1,10 @@
 const ALL = '__all__';
 
-const CategoryFilter = ({ categories, value, onChange, label = 'All' }) => {
-  const items = [{ key: ALL, label }, ...categories.map((c) => ({ key: c, label: c }))];
+const CategoryFilter = ({ categories, value, onChange, label = 'All', getLabel }) => {
+  const items = [
+    { key: ALL, label },
+    ...categories.map((c) => ({ key: c, label: getLabel ? getLabel(c) : c })),
+  ];
   const current = value ?? ALL;
 
   return (

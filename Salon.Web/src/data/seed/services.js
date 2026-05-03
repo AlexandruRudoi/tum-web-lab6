@@ -4,6 +4,7 @@ import { nowIso } from '../../utils/date';
 export const seedServices = () => [
   {
     id: createId(),
+    i18nKey: 'signatureHaircut',
     name: 'Signature Haircut',
     category: 'Hair',
     description: 'Personalized haircut with consultation, wash and styling.',
@@ -15,6 +16,7 @@ export const seedServices = () => [
   },
   {
     id: createId(),
+    i18nKey: 'hairColoring',
     name: 'Hair Coloring',
     category: 'Hair',
     description: 'Full hair coloring with premium professional dyes.',
@@ -26,6 +28,7 @@ export const seedServices = () => [
   },
   {
     id: createId(),
+    i18nKey: 'classicManicure',
     name: 'Classic Manicure',
     category: 'Nails',
     description: 'Nail shaping, cuticle care and polish.',
@@ -37,6 +40,7 @@ export const seedServices = () => [
   },
   {
     id: createId(),
+    i18nKey: 'spaPedicure',
     name: 'Spa Pedicure',
     category: 'Nails',
     description: 'Relaxing pedicure with foot mask and massage.',
@@ -48,6 +52,7 @@ export const seedServices = () => [
   },
   {
     id: createId(),
+    i18nKey: 'eveningMakeup',
     name: 'Evening Makeup',
     category: 'Makeup',
     description: 'Glamorous makeup look for evenings and special events.',
@@ -59,6 +64,7 @@ export const seedServices = () => [
   },
   {
     id: createId(),
+    i18nKey: 'hydratingFacial',
     name: 'Hydrating Facial',
     category: 'Skincare',
     description: 'Deep cleansing and hydration treatment for glowing skin.',
@@ -70,6 +76,7 @@ export const seedServices = () => [
   },
   {
     id: createId(),
+    i18nKey: 'eyebrowShaping',
     name: 'Eyebrow Shaping',
     category: 'Brows & Lashes',
     description: 'Eyebrow design with tweezing, waxing and tinting.',

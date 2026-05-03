@@ -17,6 +17,7 @@ import {
   useNews,
   useBookings,
 } from '../context/useEntityContexts';
+import { translateService } from '../i18n/translateEntity';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { formatDate } from '../utils/date';
@@ -154,11 +155,12 @@ const DashboardPage = () => {
             <ul className="divide-y divide-gold-200/50 dark:divide-gold-800/40">
               {upcoming.map((b) => {
                 const svc = serviceMap[b.serviceId];
+                const tsvc = svc ? translateService(svc, t) : null;
                 return (
                   <li key={b.id} className="flex items-center justify-between py-3">
                     <div>
                       <p className="font-medium text-neutral-800 dark:text-neutral-100">
-                        {svc ? svc.name : t('booking.serviceRemoved')}
+                        {tsvc ? tsvc.name : t('booking.serviceRemoved')}
                       </p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         {b.clientName} · {b.date} · {b.time}

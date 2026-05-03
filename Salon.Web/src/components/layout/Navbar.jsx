@@ -3,6 +3,7 @@ import { Moon, Sun, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
 import LanguageSwitcher from '../common/LanguageSwitcher';
+import { CAN_MANAGE } from '../../config/permissions';
 
 const linkDefs = [
   { to: '/', key: 'home', end: true },
@@ -10,7 +11,7 @@ const linkDefs = [
   { to: '/products', key: 'products' },
   { to: '/news', key: 'news' },
   { to: '/booking', key: 'booking' },
-  { to: '/dashboard', key: 'dashboard' },
+  { to: '/dashboard', key: 'dashboard', requiresManage: true },
 ];
 
 const Navbar = () => {
@@ -35,7 +36,9 @@ const Navbar = () => {
         </NavLink>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {linkDefs.map(({ to, key, end }) => (
+          {linkDefs
+            .filter(({ requiresManage }) => !requiresManage || CAN_MANAGE)
+            .map(({ to, key, end }) => (
             <NavLink
               key={to}
               to={to}

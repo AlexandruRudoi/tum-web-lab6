@@ -70,13 +70,13 @@
   --shadow-cardHover:  0 16px 36px rgba(184, 134, 43, 0.22);
   --shadow-elevated:   0 22px 48px rgba(86, 64, 20, 0.18);
 
-  /* Z-index scale */
-  --z-base:     0;
-  --z-dropdown: 100;
-  --z-sticky:   200;
-  --z-overlay:  300;
-  --z-modal:    400;
-  --z-toast:    500;
+  /* Z-index scale (Tailwind v4 uses --z-index-* namespace) */
+  --z-index-base:     0;
+  --z-index-dropdown: 100;
+  --z-index-sticky:   200;
+  --z-index-overlay:  300;
+  --z-index-modal:    400;
+  --z-index-toast:    500;
 
   /* Animations */
   --animate-fadeIn: fadeIn 0.3s ease-in-out;

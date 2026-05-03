@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNews } from '../context/useEntityContexts';
 import { useFilterSearch } from '../hooks/useFilterSearch';
 import { NEWS_CATEGORIES } from '../data/entities';
+import { CAN_MANAGE } from '../config/permissions';
 import SearchBar from '../components/common/SearchBar';
 import CategoryFilter from '../components/common/CategoryFilter';
 import EmptyState from '../components/common/EmptyState';
@@ -69,10 +70,12 @@ const NewsPage = () => {
             {t('news.subtitle')}
           </p>
         </div>
-        <Button onClick={() => setFormOpen(true)}>
-          <Plus className="h-4 w-4" />
-          {t('news.addBtn')}
-        </Button>
+        {CAN_MANAGE && (
+          <Button onClick={() => setFormOpen(true)}>
+            <Plus className="h-4 w-4" />
+            {t('news.addBtn')}
+          </Button>
+        )}
       </div>
 
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
@@ -103,10 +106,12 @@ const NewsPage = () => {
           title={t('news.emptyTitle')}
           description={t('news.emptyDescription')}
           action={
-            <Button onClick={() => setFormOpen(true)}>
-              <Plus className="h-4 w-4" />
-              {t('news.addBtn')}
-            </Button>
+            CAN_MANAGE ? (
+              <Button onClick={() => setFormOpen(true)}>
+                <Plus className="h-4 w-4" />
+                {t('news.addBtn')}
+              </Button>
+            ) : null
           }
         />
       ) : (
@@ -117,7 +122,7 @@ const NewsPage = () => {
               post={post}
               onToggleLike={toggleLike}
               onTogglePin={togglePin}
-              onRemove={() => setPendingDelete(post)}
+              onRemove={CAN_MANAGE ? () => setPendingDelete(post) : undefined}
             />
           ))}
         </div>
