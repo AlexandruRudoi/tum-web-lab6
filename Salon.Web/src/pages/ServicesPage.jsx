@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Sparkles, Heart } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useServices } from '../context/useEntityContexts';
 import { useFilterSearch } from '../hooks/useFilterSearch';
 import { SERVICE_CATEGORIES } from '../data/entities';
@@ -16,6 +17,7 @@ import ServiceFormModal from '../components/services/ServiceFormModal';
 const ServicesPage = () => {
   const { services, addService, removeService, toggleLike } = useServices();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState(null);
@@ -31,13 +33,13 @@ const ServicesPage = () => {
 
   const handleAdd = (data) => {
     addService(data);
-    toast.success(`"${data.name}" added`);
+    toast.success(t('services.added', { name: data.name }));
   };
 
   const handleRemoveConfirm = () => {
     if (!pendingDelete) return;
     removeService(pendingDelete.id);
-    toast.info(`"${pendingDelete.name}" removed`);
+    toast.info(t('services.removed', { name: pendingDelete.name }));
   };
 
   const handleBook = (service) => {
@@ -51,35 +53,35 @@ const ServicesPage = () => {
           <div className="mb-3 flex items-center gap-3 text-gold-600 dark:text-gold-400">
             <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500" />
             <span className="text-[11px] font-semibold uppercase tracking-[0.35em]">
-              Treatments
+              {t('services.eyebrow')}
             </span>
           </div>
           <h1 className="font-display text-5xl font-semibold leading-tight text-neutral-900 dark:text-white md:text-6xl">
-            Our{' '}
+            {t('services.titlePart')}{' '}
             <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-              Services
+              {t('services.titleAccent')}
             </span>
           </h1>
           <p className="mt-4 max-w-xl text-neutral-600 dark:text-neutral-300">
-            Browse, filter and book the beauty treatments offered at HAPPINESS — each
-            one crafted with care and a touch of gold.
+            {t('services.subtitle')}
           </p>
         </div>
         <Button onClick={() => setFormOpen(true)}>
           <Plus className="h-4 w-4" />
-          Add service
+          {t('services.addBtn')}
         </Button>
       </div>
 
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
         <div className="md:w-80">
-          <SearchBar value={query} onChange={setQuery} placeholder="Search services…" />
+          <SearchBar value={query} onChange={setQuery} placeholder={t('services.searchPlaceholder')} />
         </div>
         <div className="flex-1">
           <CategoryFilter
             categories={SERVICE_CATEGORIES}
             value={category}
             onChange={setCategory}
+            label={t('common.all')}
           />
         </div>
         <Button
@@ -88,19 +90,19 @@ const ServicesPage = () => {
           onClick={() => setShowOnlyLiked((v) => !v)}
         >
           <Heart className={`h-4 w-4 ${showOnlyLiked ? 'fill-current' : ''}`} />
-          Favorites
+          {t('common.favorites')}
         </Button>
       </div>
 
       {filtered.length === 0 ? (
         <EmptyState
           icon={Sparkles}
-          title="No services found"
-          description="Try adjusting your search or filters, or add a new service."
+          title={t('services.emptyTitle')}
+          description={t('services.emptyDescription')}
           action={
             <Button onClick={() => setFormOpen(true)}>
               <Plus className="h-4 w-4" />
-              Add service
+              {t('services.addBtn')}
             </Button>
           }
         />
@@ -128,9 +130,10 @@ const ServicesPage = () => {
         open={!!pendingDelete}
         onClose={() => setPendingDelete(null)}
         onConfirm={handleRemoveConfirm}
-        title="Remove service?"
-        message={pendingDelete ? `"${pendingDelete.name}" will be permanently removed.` : ''}
-        confirmLabel="Remove"
+        title={t('services.removeTitle')}
+        message={pendingDelete ? t('services.removeMessage', { name: pendingDelete.name }) : ''}
+        confirmLabel={t('common.remove')}
+        cancelLabel={t('common.cancel')}
       />
     </section>
   );

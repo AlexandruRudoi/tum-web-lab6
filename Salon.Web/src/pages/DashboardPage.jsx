@@ -10,6 +10,7 @@ import {
   Pin,
   Clock,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   useServices,
   useProducts,
@@ -20,7 +21,7 @@ import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import { formatDate } from '../utils/date';
 
-const StatCard = ({ icon: Icon, label, value, accent, to }) => (
+const StatCard = ({ icon: Icon, label, value, accent, to, viewLabel }) => (
   <Card className="p-5">
     <div className="flex items-center justify-between">
       <div>
@@ -38,7 +39,7 @@ const StatCard = ({ icon: Icon, label, value, accent, to }) => (
         to={to}
         className="mt-4 inline-block text-xs font-semibold uppercase tracking-[0.18em] text-gold-700 hover:text-gold-800 dark:text-gold-300"
       >
-        View →
+        {viewLabel} →
       </Link>
     )}
   </Card>
@@ -49,6 +50,7 @@ const DashboardPage = () => {
   const { products } = useProducts();
   const { news } = useNews();
   const { bookings } = useBookings();
+  const { t } = useTranslation();
 
   const stats = useMemo(() => {
     const lowStock = products.filter((p) => p.stock > 0 && p.stock < 5).length;
@@ -94,62 +96,40 @@ const DashboardPage = () => {
     [products],
   );
 
+  const view = t('common.view');
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-10">
         <div className="mb-3 flex items-center gap-3 text-gold-600 dark:text-gold-400">
           <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500" />
           <span className="text-[11px] font-semibold uppercase tracking-[0.35em]">
-            Studio
+            {t('dashboard.eyebrow')}
           </span>
         </div>
         <h1 className="font-display text-5xl font-semibold leading-tight text-neutral-900 dark:text-white md:text-6xl">
-          Salon{' '}
+          {t('dashboard.titlePart')}{' '}
           <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-            Dashboard
+            {t('dashboard.titleAccent')}
           </span>
         </h1>
         <p className="mt-4 max-w-xl text-neutral-600 dark:text-neutral-300">
-          A quick look at everything happening at HAPPINESS today.
+          {t('dashboard.subtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard
-          icon={Scissors}
-          label="Services"
-          value={services.length}
-          accent="text-neutral-900 dark:text-white"
-          to="/services"
-        />
-        <StatCard
-          icon={ShoppingBag}
-          label="Products"
-          value={products.length}
-          accent="text-neutral-900 dark:text-white"
-          to="/products"
-        />
-        <StatCard
-          icon={Newspaper}
-          label="News posts"
-          value={news.length}
-          accent="text-neutral-900 dark:text-white"
-          to="/news"
-        />
-        <StatCard
-          icon={CalendarCheck}
-          label="Bookings"
-          value={bookings.length}
-          accent="text-neutral-900 dark:text-white"
-          to="/booking"
-        />
+        <StatCard icon={Scissors} label={t('dashboard.stats.services')} value={services.length} accent="text-neutral-900 dark:text-white" to="/services" viewLabel={view} />
+        <StatCard icon={ShoppingBag} label={t('dashboard.stats.products')} value={products.length} accent="text-neutral-900 dark:text-white" to="/products" viewLabel={view} />
+        <StatCard icon={Newspaper} label={t('dashboard.stats.news')} value={news.length} accent="text-neutral-900 dark:text-white" to="/news" viewLabel={view} />
+        <StatCard icon={CalendarCheck} label={t('dashboard.stats.bookings')} value={bookings.length} accent="text-neutral-900 dark:text-white" to="/booking" viewLabel={view} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <StatCard icon={Clock} label="Pending" value={stats.pending} accent="text-amber-600" />
-        <StatCard icon={CalendarCheck} label="Confirmed" value={stats.confirmed} accent="text-emerald-600" />
-        <StatCard icon={TrendingUp} label="Low stock" value={stats.lowStock + stats.outOfStock} accent="text-red-500" />
-        <StatCard icon={Heart} label="Favorites" value={stats.liked} accent="text-gold-700" />
+        <StatCard icon={Clock} label={t('dashboard.stats.pending')} value={stats.pending} accent="text-amber-600" />
+        <StatCard icon={CalendarCheck} label={t('dashboard.stats.confirmed')} value={stats.confirmed} accent="text-emerald-600" />
+        <StatCard icon={TrendingUp} label={t('dashboard.stats.lowStock')} value={stats.lowStock + stats.outOfStock} accent="text-red-500" />
+        <StatCard icon={Heart} label={t('dashboard.stats.favorites')} value={stats.liked} accent="text-gold-700" />
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -157,20 +137,18 @@ const DashboardPage = () => {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-                Upcoming bookings
+                {t('dashboard.upcoming')}
               </h2>
               <span className="mt-1 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
             </div>
             <Link to="/booking">
-              <Button variant="outline" size="sm">
-                View all
-              </Button>
+              <Button variant="outline" size="sm">{t('common.viewAll')}</Button>
             </Link>
           </div>
 
           {upcoming.length === 0 ? (
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              No upcoming bookings.
+              {t('dashboard.noUpcoming')}
             </p>
           ) : (
             <ul className="divide-y divide-gold-200/50 dark:divide-gold-800/40">
@@ -180,14 +158,14 @@ const DashboardPage = () => {
                   <li key={b.id} className="flex items-center justify-between py-3">
                     <div>
                       <p className="font-medium text-neutral-800 dark:text-neutral-100">
-                        {svc ? svc.name : 'Service removed'}
+                        {svc ? svc.name : t('booking.serviceRemoved')}
                       </p>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                        {b.clientName} · {b.date} at {b.time}
+                        {b.clientName} · {b.date} · {b.time}
                       </p>
                     </div>
                     <span className="rounded-full bg-gold-50 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-700 dark:bg-gold-900/40 dark:text-gold-300">
-                      {b.status}
+                      {t(`booking.status.${b.status}`)}
                     </span>
                   </li>
                 );
@@ -199,13 +177,13 @@ const DashboardPage = () => {
         <Card className="p-6">
           <div className="mb-4">
             <h2 className="font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-              Low stock
+              {t('dashboard.lowStock')}
             </h2>
             <span className="mt-1 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
           </div>
           {lowStockItems.length === 0 ? (
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              All products well stocked.
+              {t('dashboard.noLowStock')}
             </p>
           ) : (
             <ul className="space-y-3">
@@ -217,7 +195,7 @@ const DashboardPage = () => {
                       p.stock <= 0 ? 'text-red-500' : 'text-amber-600'
                     }`}
                   >
-                    {p.stock <= 0 ? 'Out' : `${p.stock} left`}
+                    {p.stock <= 0 ? t('dashboard.stockOut') : t('dashboard.stockLeft', { count: p.stock })}
                   </span>
                 </li>
               ))}
@@ -231,19 +209,17 @@ const DashboardPage = () => {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-                Recent posts
+                {t('dashboard.recentPosts')}
               </h2>
               <span className="mt-1 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
             </div>
             <Link to="/news">
-              <Button variant="outline" size="sm">
-                View all
-              </Button>
+              <Button variant="outline" size="sm">{t('common.viewAll')}</Button>
             </Link>
           </div>
           {recentNews.length === 0 ? (
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              No posts yet.
+              {t('dashboard.noPosts')}
             </p>
           ) : (
             <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">

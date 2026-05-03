@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { PRODUCT_CATEGORIES } from '../../data/entities';
@@ -12,6 +13,7 @@ const initial = {
 };
 
 const ProductFormModal = ({ open, onClose, onSubmit }) => {
+  const { t } = useTranslation();
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState({});
 
@@ -19,10 +21,10 @@ const ProductFormModal = ({ open, onClose, onSubmit }) => {
 
   const validate = () => {
     const next = {};
-    if (!form.name.trim()) next.name = 'Name is required';
-    if (!form.description.trim()) next.description = 'Description is required';
-    if (!form.price || Number(form.price) <= 0) next.price = 'Enter a positive price';
-    if (form.stock === '' || Number(form.stock) < 0) next.stock = 'Stock cannot be negative';
+    if (!form.name.trim()) next.name = t('validation.nameRequired');
+    if (!form.description.trim()) next.description = t('validation.descriptionRequired');
+    if (!form.price || Number(form.price) <= 0) next.price = t('validation.pricePositive');
+    if (form.stock === '' || Number(form.stock) < 0) next.stock = t('validation.stockNonNegative');
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -48,15 +50,15 @@ const ProductFormModal = ({ open, onClose, onSubmit }) => {
   const errorClass = 'mt-1 text-xs text-red-500';
 
   return (
-    <Modal open={open} onClose={onClose} title="Add a new product">
+    <Modal open={open} onClose={onClose} title={t('products.modal.title')}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className={labelClass}>Name</label>
+          <label className={labelClass}>{t('form.name')}</label>
           <input className={inputClass} value={form.name} onChange={update('name')} />
           {errors.name && <p className={errorClass}>{errors.name}</p>}
         </div>
         <div>
-          <label className={labelClass}>Category</label>
+          <label className={labelClass}>{t('form.category')}</label>
           <select className={inputClass} value={form.category} onChange={update('category')}>
             {PRODUCT_CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -66,7 +68,7 @@ const ProductFormModal = ({ open, onClose, onSubmit }) => {
           </select>
         </div>
         <div>
-          <label className={labelClass}>Description</label>
+          <label className={labelClass}>{t('form.description')}</label>
           <textarea
             rows={3}
             className={inputClass}
@@ -77,7 +79,7 @@ const ProductFormModal = ({ open, onClose, onSubmit }) => {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className={labelClass}>Price (MDL)</label>
+            <label className={labelClass}>{t('form.price', { currency: t('common.currency') })}</label>
             <input
               type="number"
               min="0"
@@ -88,7 +90,7 @@ const ProductFormModal = ({ open, onClose, onSubmit }) => {
             {errors.price && <p className={errorClass}>{errors.price}</p>}
           </div>
           <div>
-            <label className={labelClass}>Stock</label>
+            <label className={labelClass}>{t('form.stock')}</label>
             <input
               type="number"
               min="0"
@@ -102,9 +104,9 @@ const ProductFormModal = ({ open, onClose, onSubmit }) => {
 
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="ghost" onClick={onClose} type="button">
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button type="submit">Add product</Button>
+          <Button type="submit">{t('products.modal.submit')}</Button>
         </div>
       </form>
     </Modal>

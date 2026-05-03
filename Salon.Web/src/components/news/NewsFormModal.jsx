@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { NEWS_CATEGORIES } from '../../data/entities';
@@ -11,6 +12,7 @@ const initial = {
 };
 
 const NewsFormModal = ({ open, onClose, onSubmit }) => {
+  const { t } = useTranslation();
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState({});
 
@@ -22,8 +24,8 @@ const NewsFormModal = ({ open, onClose, onSubmit }) => {
 
   const validate = () => {
     const next = {};
-    if (!form.title.trim()) next.title = 'Title is required';
-    if (!form.content.trim()) next.content = 'Content is required';
+    if (!form.title.trim()) next.title = t('validation.titleRequired');
+    if (!form.content.trim()) next.content = t('validation.contentRequired');
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -48,15 +50,15 @@ const NewsFormModal = ({ open, onClose, onSubmit }) => {
   const errorClass = 'mt-1 text-xs text-red-500';
 
   return (
-    <Modal open={open} onClose={onClose} title="Add a news post">
+    <Modal open={open} onClose={onClose} title={t('news.modal.title')}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className={labelClass}>Title</label>
+          <label className={labelClass}>{t('form.title')}</label>
           <input className={inputClass} value={form.title} onChange={update('title')} />
           {errors.title && <p className={errorClass}>{errors.title}</p>}
         </div>
         <div>
-          <label className={labelClass}>Category</label>
+          <label className={labelClass}>{t('form.category')}</label>
           <select className={inputClass} value={form.category} onChange={update('category')}>
             {NEWS_CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -66,7 +68,7 @@ const NewsFormModal = ({ open, onClose, onSubmit }) => {
           </select>
         </div>
         <div>
-          <label className={labelClass}>Content</label>
+          <label className={labelClass}>{t('form.content')}</label>
           <textarea
             rows={4}
             className={inputClass}
@@ -82,14 +84,14 @@ const NewsFormModal = ({ open, onClose, onSubmit }) => {
             onChange={update('pinned')}
             className="h-4 w-4 rounded border-neutral-300 text-gold-500 focus:ring-gold-300"
           />
-          Pin to top
+          {t('news.modal.pinToTop')}
         </label>
 
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="ghost" onClick={onClose} type="button">
-            Cancel
+            {t('common.cancel')}
           </Button>
-          <Button type="submit">Publish</Button>
+          <Button type="submit">{t('news.modal.submit')}</Button>
         </div>
       </form>
     </Modal>

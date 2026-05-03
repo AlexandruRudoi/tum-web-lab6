@@ -1,14 +1,16 @@
-import { Heart, Trash2, Package, ShoppingBag } from 'lucide-react';
+import { Heart, Trash2, Package, Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Card from '../common/Card';
 import Button from '../common/Button';
 
 const stockTone = (stock) => {
   if (stock <= 0) return 'text-red-500';
   if (stock < 5) return 'text-amber-600 dark:text-amber-400';
-  return 'text-neutral-500 dark:text-neutral-400';
+  return 'text-emerald-600 dark:text-emerald-400';
 };
 
-const ProductCard = ({ product, onToggleLike, onRemove, onBuy }) => {
+const ProductCard = ({ product, onToggleLike, onRemove }) => {
+  const { t } = useTranslation();
   const outOfStock = product.stock <= 0;
 
   return (
@@ -26,7 +28,7 @@ const ProductCard = ({ product, onToggleLike, onRemove, onBuy }) => {
         <button
           type="button"
           onClick={() => onToggleLike?.(product.id)}
-          aria-label={product.liked ? 'Unlike product' : 'Like product'}
+          aria-label={product.liked ? t('products.unlikeAria') : t('products.likeAria')}
           className={`rounded-full p-2 transition-colors ${
             product.liked
               ? 'bg-gold-100 text-gold-700 dark:bg-gold-900/50 dark:text-gold-300'
@@ -44,30 +46,29 @@ const ProductCard = ({ product, onToggleLike, onRemove, onBuy }) => {
       <div className="mt-5 flex items-center justify-between px-5 text-sm">
         <span className={`flex items-center gap-1.5 ${stockTone(product.stock)}`}>
           <Package className="h-4 w-4" />
-          {outOfStock ? 'Out of stock' : `${product.stock} in stock`}
+          {outOfStock
+            ? t('products.outOfStock')
+            : t('products.inStock', { count: product.stock })}
         </span>
         <span className="font-display text-xl font-semibold text-gold-700 dark:text-gold-300">
           {product.price}{' '}
-          <span className="text-xs font-normal tracking-wider text-neutral-400">MDL</span>
+          <span className="text-xs font-normal tracking-wider text-neutral-400">
+            {t('common.currency')}
+          </span>
         </span>
       </div>
 
       <div className="mt-5 flex items-center justify-between gap-2 border-t border-gold-200/60 bg-gradient-to-r from-gold-50/40 to-neutral-50/60 p-4 dark:border-gold-800/40 dark:from-gold-900/15 dark:to-neutral-900/40">
-        <Button
-          variant="primary"
-          size="sm"
-          disabled={outOfStock}
-          onClick={() => onBuy?.(product)}
-        >
-          <ShoppingBag className="h-4 w-4" />
-          {outOfStock ? 'Unavailable' : 'Buy now'}
-        </Button>
+        <span className="flex items-center gap-2 text-xs italic text-neutral-600 dark:text-neutral-300">
+          <Info className="h-4 w-4 text-gold-600" />
+          {t('products.askInSalon')}
+        </span>
         {onRemove && (
           <Button
             variant="ghost"
             size="icon"
             onClick={() => onRemove(product.id)}
-            aria-label="Remove product"
+            aria-label={t('products.removeAria')}
             className="text-neutral-400 hover:text-red-500"
           >
             <Trash2 className="h-4 w-4" />

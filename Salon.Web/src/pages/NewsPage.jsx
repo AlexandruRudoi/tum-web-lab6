@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Plus, Newspaper, Heart } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useNews } from '../context/useEntityContexts';
 import { useFilterSearch } from '../hooks/useFilterSearch';
 import { NEWS_CATEGORIES } from '../data/entities';
@@ -14,6 +15,7 @@ import NewsFormModal from '../components/news/NewsFormModal';
 
 const NewsPage = () => {
   const { news, addNews, removeNews, toggleLike, togglePin } = useNews();
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState(null);
@@ -38,13 +40,13 @@ const NewsPage = () => {
 
   const handleAdd = (data) => {
     addNews(data);
-    toast.success(`"${data.title}" published`);
+    toast.success(t('news.published', { title: data.title }));
   };
 
   const handleRemoveConfirm = () => {
     if (!pendingDelete) return;
     removeNews(pendingDelete.id);
-    toast.info(`"${pendingDelete.title}" removed`);
+    toast.info(t('news.removed', { title: pendingDelete.title }));
   };
 
   return (
@@ -54,35 +56,35 @@ const NewsPage = () => {
           <div className="mb-3 flex items-center gap-3 text-gold-600 dark:text-gold-400">
             <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500" />
             <span className="text-[11px] font-semibold uppercase tracking-[0.35em]">
-              Journal
+              {t('news.eyebrow')}
             </span>
           </div>
           <h1 className="font-display text-5xl font-semibold leading-tight text-neutral-900 dark:text-white md:text-6xl">
-            News &{' '}
+            {t('news.titlePart')}{' '}
             <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-              Promotions
+              {t('news.titleAccent')}
             </span>
           </h1>
           <p className="mt-4 max-w-xl text-neutral-600 dark:text-neutral-300">
-            Stories, offers and little moments from inside the salon — pinned posts
-            stay at the top.
+            {t('news.subtitle')}
           </p>
         </div>
         <Button onClick={() => setFormOpen(true)}>
           <Plus className="h-4 w-4" />
-          Publish post
+          {t('news.addBtn')}
         </Button>
       </div>
 
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
         <div className="md:w-80">
-          <SearchBar value={query} onChange={setQuery} placeholder="Search posts…" />
+          <SearchBar value={query} onChange={setQuery} placeholder={t('news.searchPlaceholder')} />
         </div>
         <div className="flex-1">
           <CategoryFilter
             categories={NEWS_CATEGORIES}
             value={category}
             onChange={setCategory}
+            label={t('common.all')}
           />
         </div>
         <Button
@@ -91,19 +93,19 @@ const NewsPage = () => {
           onClick={() => setShowOnlyLiked((v) => !v)}
         >
           <Heart className={`h-4 w-4 ${showOnlyLiked ? 'fill-current' : ''}`} />
-          Favorites
+          {t('common.favorites')}
         </Button>
       </div>
 
       {sorted.length === 0 ? (
         <EmptyState
           icon={Newspaper}
-          title="No posts yet"
-          description="Try clearing your filters, or publish the first post."
+          title={t('news.emptyTitle')}
+          description={t('news.emptyDescription')}
           action={
             <Button onClick={() => setFormOpen(true)}>
               <Plus className="h-4 w-4" />
-              Publish post
+              {t('news.addBtn')}
             </Button>
           }
         />
@@ -131,9 +133,10 @@ const NewsPage = () => {
         open={!!pendingDelete}
         onClose={() => setPendingDelete(null)}
         onConfirm={handleRemoveConfirm}
-        title="Remove post?"
-        message={pendingDelete ? `"${pendingDelete.title}" will be permanently removed.` : ''}
-        confirmLabel="Remove"
+        title={t('news.removeTitle')}
+        message={pendingDelete ? t('news.removeMessage', { title: pendingDelete.title }) : ''}
+        confirmLabel={t('common.remove')}
+        cancelLabel={t('common.cancel')}
       />
     </section>
   );

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight, Scissors, ShoppingBag, Newspaper, CalendarPlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useServices, useProducts, useNews } from '../context/useEntityContexts';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -10,6 +11,7 @@ const HomePage = () => {
   const { services } = useServices();
   const { products } = useProducts();
   const { news } = useNews();
+  const { t } = useTranslation();
 
   const featuredServices = useMemo(() => services.slice(0, 3), [services]);
   const featuredProducts = useMemo(
@@ -27,6 +29,8 @@ const HomePage = () => {
     [news],
   );
 
+  const currency = t('common.currency');
+
   return (
     <>
       {/* Hero */}
@@ -40,48 +44,35 @@ const HomePage = () => {
           <div className="mb-5 flex items-center gap-3 text-gold-600 dark:text-gold-400">
             <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500" />
             <span className="text-[11px] font-semibold uppercase tracking-[0.4em]">
-              Welcome to HAPPINESS
+              {t('home.eyebrow')}
             </span>
             <span className="h-px w-10 bg-gradient-to-l from-transparent to-gold-500" />
           </div>
 
           <h1 className="font-display text-5xl font-semibold leading-tight text-neutral-900 dark:text-white md:text-7xl">
-            Where{' '}
+            {t('home.titlePart1')}{' '}
             <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-              beauty
+              {t('home.titleAccent')}
             </span>{' '}
-            meets serenity.
+            {t('home.titlePart2')}
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-neutral-600 dark:text-neutral-300">
-            Hair, nails, makeup and skincare crafted with care — and a touch of gold.
-            Step into the salon, leave glowing.
+            {t('home.subtitle')}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link to="/booking">
               <Button size="lg">
                 <CalendarPlus className="h-4 w-4" />
-                Book a treatment
+                {t('home.ctaBook')}
               </Button>
             </Link>
             <Link to="/services">
               <Button variant="outline" size="lg">
-                Explore services
+                {t('home.ctaServices')}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-          </div>
-
-          <div className="mt-14 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-xs uppercase tracking-[0.3em] text-neutral-500 dark:text-neutral-400">
-            <span>Hair</span>
-            <span className="text-gold-500">·</span>
-            <span>Nails</span>
-            <span className="text-gold-500">·</span>
-            <span>Makeup</span>
-            <span className="text-gold-500">·</span>
-            <span>Skincare</span>
-            <span className="text-gold-500">·</span>
-            <span>Brows & Lashes</span>
           </div>
         </div>
       </section>
@@ -91,18 +82,18 @@ const HomePage = () => {
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-gold-600 dark:text-gold-400">
-              Signature
+              {t('home.featuredEyebrow')}
             </p>
             <h2 className="font-display text-4xl font-semibold text-neutral-900 dark:text-white">
-              Featured{' '}
+              {t('home.featuredTitlePart')}{' '}
               <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-                treatments
+                {t('home.featuredAccent')}
               </span>
             </h2>
           </div>
           <Link to="/services" className="hidden md:block">
             <Button variant="ghost" size="sm">
-              All services <ArrowRight className="h-4 w-4" />
+              {t('home.allServices')} <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -120,10 +111,10 @@ const HomePage = () => {
               </p>
               <div className="mt-4 flex items-center justify-between">
                 <span className="font-display text-lg font-semibold text-gold-700 dark:text-gold-300">
-                  {s.price} <span className="text-xs font-normal text-neutral-400">MDL</span>
+                  {s.price} <span className="text-xs font-normal text-neutral-400">{currency}</span>
                 </span>
                 <Link to={`/booking?serviceId=${s.id}`}>
-                  <Button size="sm">Book</Button>
+                  <Button size="sm">{t('services.book')}</Button>
                 </Link>
               </div>
             </Card>
@@ -136,19 +127,19 @@ const HomePage = () => {
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-gold-600 dark:text-gold-400">
-              Boutique
+              {t('home.boutiqueEyebrow')}
             </p>
             <h2 className="font-display text-4xl font-semibold text-neutral-900 dark:text-white">
-              Take{' '}
+              {t('home.boutiqueTitlePart1')}{' '}
               <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-                HAPPINESS
+                {t('home.boutiqueAccent')}
               </span>{' '}
-              home
+              {t('home.boutiqueTitlePart2')}
             </h2>
           </div>
           <Link to="/products" className="hidden md:block">
             <Button variant="ghost" size="sm">
-              All products <ArrowRight className="h-4 w-4" />
+              {t('home.allProducts')} <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -166,11 +157,11 @@ const HomePage = () => {
               </p>
               <div className="mt-4 flex items-center justify-between">
                 <span className="font-display text-lg font-semibold text-gold-700 dark:text-gold-300">
-                  {p.price} <span className="text-xs font-normal text-neutral-400">MDL</span>
+                  {p.price} <span className="text-xs font-normal text-neutral-400">{currency}</span>
                 </span>
                 <Link to="/products">
                   <Button variant="outline" size="sm">
-                    Shop
+                    {t('home.shop')}
                   </Button>
                 </Link>
               </div>
@@ -184,18 +175,18 @@ const HomePage = () => {
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-gold-600 dark:text-gold-400">
-              Journal
+              {t('home.newsEyebrow')}
             </p>
             <h2 className="font-display text-4xl font-semibold text-neutral-900 dark:text-white">
-              Latest{' '}
+              {t('home.newsTitlePart')}{' '}
               <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-                stories
+                {t('home.newsAccent')}
               </span>
             </h2>
           </div>
           <Link to="/news" className="hidden md:block">
             <Button variant="ghost" size="sm">
-              All news <ArrowRight className="h-4 w-4" />
+              {t('home.allNews')} <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -226,26 +217,26 @@ const HomePage = () => {
         <Card className="overflow-hidden p-10 text-center">
           <Sparkles className="mx-auto h-8 w-8 text-gold-500" />
           <h2 className="mt-4 font-display text-4xl font-semibold text-neutral-900 dark:text-white md:text-5xl">
-            Ready to feel{' '}
+            {t('home.ctaEyebrow')}{' '}
             <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-              radiant
+              {t('home.ctaAccent')}
             </span>
-            ?
+            {t('home.ctaQuestion')}
           </h2>
           <p className="mt-4 text-neutral-600 dark:text-neutral-300">
-            Book a treatment or browse our curated boutique.
+            {t('home.ctaSubtitle')}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link to="/booking">
               <Button size="lg">
                 <CalendarPlus className="h-4 w-4" />
-                Book now
+                {t('home.ctaBookNow')}
               </Button>
             </Link>
             <Link to="/news">
               <Button variant="outline" size="lg">
                 <Newspaper className="h-4 w-4" />
-                Read journal
+                {t('home.ctaReadJournal')}
               </Button>
             </Link>
           </div>

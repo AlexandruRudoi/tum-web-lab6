@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CalendarPlus, Clock, User, Phone, Trash2, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useBookings, useServices } from '../context/useEntityContexts';
 import { BOOKING_STATUS } from '../data/entities';
 import Card from '../components/common/Card';
@@ -23,6 +24,7 @@ const BookingPage = () => {
   const { services } = useServices();
   const { bookings, addBooking, removeBooking, setBookingStatus } = useBookings();
   const [params, setParams] = useSearchParams();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState(() => {
     const sid = params.get('serviceId');
@@ -48,11 +50,11 @@ const BookingPage = () => {
 
   const validate = () => {
     const next = {};
-    if (!form.clientName.trim()) next.clientName = 'Name is required';
-    if (!/^[+\d\s()-]{6,}$/.test(form.phone.trim())) next.phone = 'Enter a valid phone';
-    if (!form.serviceId) next.serviceId = 'Choose a service';
-    if (!form.date) next.date = 'Pick a date';
-    if (!form.time) next.time = 'Pick a time';
+    if (!form.clientName.trim()) next.clientName = t('validation.nameRequired');
+    if (!/^[+\d\s()-]{6,}$/.test(form.phone.trim())) next.phone = t('validation.phoneInvalid');
+    if (!form.serviceId) next.serviceId = t('validation.serviceRequired');
+    if (!form.date) next.date = t('validation.dateRequired');
+    if (!form.time) next.time = t('validation.timeRequired');
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -68,7 +70,7 @@ const BookingPage = () => {
       time: form.time,
       notes: form.notes.trim(),
     });
-    toast.success(`Booking requested for ${booking.clientName}`);
+    toast.success(t('booking.requested', { name: booking.clientName }));
     setForm((f) => ({ ...f, clientName: '', phone: '', notes: '' }));
     if (params.get('serviceId')) setParams({});
   };
@@ -76,7 +78,7 @@ const BookingPage = () => {
   const handleRemoveConfirm = () => {
     if (!pendingDelete) return;
     removeBooking(pendingDelete.id);
-    toast.info('Booking removed');
+    toast.info(t('booking.removed'));
   };
 
   const sortedBookings = useMemo(
@@ -93,6 +95,7 @@ const BookingPage = () => {
     'w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-gold-400 focus:ring-2 focus:ring-gold-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:ring-gold-900/40';
   const labelClass = 'mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-200';
   const errorClass = 'mt-1 text-xs text-red-500';
+  const currency = t('common.currency');
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10">
@@ -100,59 +103,59 @@ const BookingPage = () => {
         <div className="mb-3 flex items-center gap-3 text-gold-600 dark:text-gold-400">
           <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold-500" />
           <span className="text-[11px] font-semibold uppercase tracking-[0.35em]">
-            Reservations
+            {t('booking.eyebrow')}
           </span>
         </div>
         <h1 className="font-display text-5xl font-semibold leading-tight text-neutral-900 dark:text-white md:text-6xl">
-          Book your{' '}
+          {t('booking.titlePart')}{' '}
           <span className="italic bg-gradient-to-r from-gold-500 via-gold-400 to-gold-600 bg-clip-text text-transparent">
-            appointment
+            {t('booking.titleAccent')}
           </span>
         </h1>
         <p className="mt-4 max-w-xl text-neutral-600 dark:text-neutral-300">
-          Reserve a treatment in a few seconds. We'll confirm by phone shortly after.
+          {t('booking.subtitle')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
         <Card className="p-6 lg:col-span-2">
           <h2 className="font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-            New booking
+            {t('booking.newBooking')}
           </h2>
           <span className="mt-2 mb-5 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className={labelClass}>Full name</label>
+              <label className={labelClass}>{t('form.fullName')}</label>
               <input
                 className={inputClass}
                 value={form.clientName}
                 onChange={update('clientName')}
-                placeholder="Jane Doe"
+                placeholder={t('form.namePlaceholder')}
               />
               {errors.clientName && <p className={errorClass}>{errors.clientName}</p>}
             </div>
             <div>
-              <label className={labelClass}>Phone</label>
+              <label className={labelClass}>{t('form.phone')}</label>
               <input
                 className={inputClass}
                 value={form.phone}
                 onChange={update('phone')}
-                placeholder="+373 ..."
+                placeholder={t('form.phonePlaceholder')}
               />
               {errors.phone && <p className={errorClass}>{errors.phone}</p>}
             </div>
             <div>
-              <label className={labelClass}>Service</label>
+              <label className={labelClass}>{t('form.service')}</label>
               <select
                 className={inputClass}
                 value={form.serviceId}
                 onChange={update('serviceId')}
               >
-                <option value="">— choose —</option>
+                <option value="">{t('booking.chooseService')}</option>
                 {services.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name} · {s.price} MDL
+                    {s.name} · {s.price} {currency}
                   </option>
                 ))}
               </select>
@@ -160,7 +163,7 @@ const BookingPage = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Date</label>
+                <label className={labelClass}>{t('form.date')}</label>
                 <input
                   type="date"
                   min={todayIso()}
@@ -171,7 +174,7 @@ const BookingPage = () => {
                 {errors.date && <p className={errorClass}>{errors.date}</p>}
               </div>
               <div>
-                <label className={labelClass}>Time</label>
+                <label className={labelClass}>{t('form.time')}</label>
                 <input
                   type="time"
                   className={inputClass}
@@ -182,32 +185,32 @@ const BookingPage = () => {
               </div>
             </div>
             <div>
-              <label className={labelClass}>Notes (optional)</label>
+              <label className={labelClass}>{t('form.notes')}</label>
               <textarea
                 rows={3}
                 className={inputClass}
                 value={form.notes}
                 onChange={update('notes')}
-                placeholder="Anything we should know?"
+                placeholder={t('form.notesPlaceholder')}
               />
             </div>
             <Button type="submit" className="w-full">
               <CalendarPlus className="h-4 w-4" />
-              Request booking
+              {t('booking.submit')}
             </Button>
           </form>
         </Card>
 
         <div className="lg:col-span-3">
           <h2 className="mb-4 font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-            Your bookings
+            {t('booking.yourBookings')}
           </h2>
 
           {sortedBookings.length === 0 ? (
             <EmptyState
               icon={CalendarPlus}
-              title="No bookings yet"
-              description="Fill in the form to request your first appointment."
+              title={t('booking.emptyTitle')}
+              description={t('booking.emptyDescription')}
             />
           ) : (
             <div className="space-y-4">
@@ -221,14 +224,14 @@ const BookingPage = () => {
                           <span
                             className={`inline-flex rounded-full px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] ${statusStyles[b.status]}`}
                           >
-                            {b.status}
+                            {t(`booking.status.${b.status}`)}
                           </span>
                           <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                            booked {formatDate(b.createdAt)}
+                            {t('booking.bookedOn', { date: formatDate(b.createdAt) })}
                           </span>
                         </div>
                         <h3 className="mt-2 font-display text-lg font-semibold text-neutral-900 dark:text-white">
-                          {svc ? svc.name : 'Service removed'}
+                          {svc ? svc.name : t('booking.serviceRemoved')}
                         </h3>
                         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-600 dark:text-neutral-300">
                           <span className="flex items-center gap-1.5">
@@ -256,7 +259,7 @@ const BookingPage = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => setBookingStatus(b.id, BOOKING_STATUS.CONFIRMED)}
-                            aria-label="Confirm booking"
+                            aria-label={t('booking.confirmAria')}
                             className="text-emerald-600 hover:text-emerald-700"
                           >
                             <CheckCircle2 className="h-4 w-4" />
@@ -267,7 +270,7 @@ const BookingPage = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => setBookingStatus(b.id, BOOKING_STATUS.CANCELLED)}
-                            aria-label="Cancel booking"
+                            aria-label={t('booking.cancelAria')}
                             className="text-amber-600 hover:text-amber-700"
                           >
                             <XCircle className="h-4 w-4" />
@@ -277,7 +280,7 @@ const BookingPage = () => {
                           variant="ghost"
                           size="icon"
                           onClick={() => setPendingDelete(b)}
-                          aria-label="Remove booking"
+                          aria-label={t('booking.removeAria')}
                           className="text-neutral-400 hover:text-red-500"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -296,9 +299,7 @@ const BookingPage = () => {
         open={!!pendingDelete}
         onClose={() => setPendingDelete(null)}
         onConfirm={handleRemoveConfirm}
-        title="Remove booking?"
-        message="This action cannot be undone."
-        confirmLabel="Remove"
+        title={t('booking.removeTitle')}
       />
     </section>
   );

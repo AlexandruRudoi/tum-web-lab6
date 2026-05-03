@@ -1,18 +1,21 @@
 import { NavLink } from 'react-router-dom';
 import { Moon, Sun, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
-const links = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/services', label: 'Services' },
-  { to: '/products', label: 'Products' },
-  { to: '/news', label: 'News' },
-  { to: '/booking', label: 'Booking' },
-  { to: '/dashboard', label: 'Dashboard' },
+const linkDefs = [
+  { to: '/', key: 'home', end: true },
+  { to: '/services', key: 'services' },
+  { to: '/products', key: 'products' },
+  { to: '/news', key: 'news' },
+  { to: '/booking', key: 'booking' },
+  { to: '/dashboard', key: 'dashboard' },
 ];
 
 const Navbar = () => {
   const { isDark, toggleMode } = useThemeContext();
+  const { t } = useTranslation();
 
   return (
     <header className="sticky top-0 z-sticky border-b border-gold-300/70 bg-neutral-50/85 backdrop-blur-md dark:border-gold-700/50 dark:bg-neutral-950/85">
@@ -26,13 +29,13 @@ const Navbar = () => {
               HAPPINESS
             </span>
             <span className="font-display text-[11px] italic tracking-[0.35em] text-gold-600 dark:text-gold-400">
-              beauty · salon
+              {t('nav.tagline')}
             </span>
           </span>
         </NavLink>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {links.map(({ to, label, end }) => (
+          {linkDefs.map(({ to, key, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -47,19 +50,22 @@ const Navbar = () => {
                 }`
               }
             >
-              {label}
+              {t(`nav.${key}`)}
             </NavLink>
           ))}
         </nav>
 
-        <button
-          type="button"
-          onClick={toggleMode}
-          aria-label="Toggle color theme"
-          className="rounded-full border border-gold-300/70 bg-white/70 p-2 text-gold-700 transition-colors hover:bg-gold-50 dark:border-gold-700/50 dark:bg-neutral-900/70 dark:text-gold-300 dark:hover:bg-neutral-800"
-        >
-          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <button
+            type="button"
+            onClick={toggleMode}
+            aria-label={t('nav.toggleTheme')}
+            className="rounded-full border border-gold-300/70 bg-white/70 p-2 text-gold-700 transition-colors hover:bg-gold-50 dark:border-gold-700/50 dark:bg-neutral-900/70 dark:text-gold-300 dark:hover:bg-neutral-800"
+          >
+            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
     </header>
   );
