@@ -8,7 +8,7 @@ const SearchBar = ({ value, onChange, placeholder = 'Search…' }) => (
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full rounded-full border border-neutral-200 bg-white py-2 pl-10 pr-10 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition-colors focus:border-primary-400 focus:ring-2 focus:ring-primary-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:border-primary-500 dark:focus:ring-primary-900/40"
+      className="w-full rounded-full border border-gold-300/70 bg-white/85 py-2 pl-10 pr-10 text-sm text-neutral-800 placeholder-neutral-400 outline-none transition-colors focus:border-gold-500 focus:ring-2 focus:ring-gold-100 dark:border-gold-700/50 dark:bg-neutral-900/60 dark:text-neutral-100 dark:focus:border-gold-400 dark:focus:ring-gold-900/40"
     />
     {value && (
       <button
