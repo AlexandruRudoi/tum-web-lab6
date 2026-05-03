@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { Moon, Sun, Sparkles } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
 import LanguageSwitcher from '../common/LanguageSwitcher';
 import { CAN_MANAGE } from '../../config/permissions';
+import logoUrl from '../../assets/logo.svg';
 
 const linkDefs = [
   { to: '/', key: 'home', end: true },
@@ -11,6 +12,7 @@ const linkDefs = [
   { to: '/products', key: 'products' },
   { to: '/news', key: 'news' },
   { to: '/booking', key: 'booking' },
+  { to: '/contact', key: 'contact' },
   { to: '/dashboard', key: 'dashboard', requiresManage: true },
 ];
 
@@ -22,9 +24,11 @@ const Navbar = () => {
     <header className="sticky top-0 z-sticky border-b border-gold-300/70 bg-neutral-50/85 backdrop-blur-md dark:border-gold-700/50 dark:bg-neutral-950/85">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         <NavLink to="/" className="group flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gold-400 to-gold-600 shadow-soft ring-2 ring-gold-200/60 dark:ring-gold-700/40">
-            <Sparkles className="h-5 w-5 text-white" />
-          </span>
+          <img
+            src={logoUrl}
+            alt="HAPPINESS Beauty Salon"
+            className="h-11 w-11 rounded-full shadow-soft ring-2 ring-gold-200/60 transition-transform duration-300 group-hover:scale-105 dark:ring-gold-700/40"
+          />
           <span className="flex flex-col leading-tight">
             <span className="font-display text-xl font-semibold tracking-[0.18em] text-neutral-800 dark:text-neutral-50">
               HAPPINESS

@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, ArrowRight, Scissors, ShoppingBag, Newspaper, CalendarPlus } from 'lucide-react';
+import { Sparkles, ArrowRight, Newspaper, CalendarPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useServices, useProducts, useNews } from '../context/useEntityContexts';
 import { translateService } from '../i18n/translateEntity';
 import Card from '../components/common/Card';
+import CardMedia from '../components/common/CardMedia';
 import Button from '../components/common/Button';
 import { formatDate } from '../utils/date';
 
@@ -103,22 +104,24 @@ const HomePage = () => {
           {featuredServices.map((raw) => {
             const s = translateService(raw, t);
             return (
-            <Card key={s.id} className="p-5">
-              <Scissors className="h-6 w-6 text-gold-600" />
-              <h3 className="mt-3 font-display text-xl font-semibold text-neutral-900 dark:text-white">
-                {s.name}
-              </h3>
-              <span className="mt-2 block h-px w-10 bg-gradient-to-r from-gold-400 to-transparent" />
-              <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-                {s.description}
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="font-display text-lg font-semibold text-gold-700 dark:text-gold-300">
-                  {s.price} <span className="text-xs font-normal text-neutral-400">{currency}</span>
-                </span>
-                <Link to={`/booking?serviceId=${s.id}`}>
-                  <Button size="sm">{t('services.book')}</Button>
-                </Link>
+            <Card key={s.id} className="overflow-hidden">
+              <CardMedia src={s.image} alt={s.name} kind="service" className="h-44" />
+              <div className="p-5">
+                <h3 className="font-display text-xl font-semibold text-neutral-900 dark:text-white">
+                  {s.name}
+                </h3>
+                <span className="mt-2 block h-px w-10 bg-gradient-to-r from-gold-400 to-transparent" />
+                <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
+                  {s.description}
+                </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="font-display text-lg font-semibold text-gold-700 dark:text-gold-300">
+                    {s.price} <span className="text-xs font-normal text-neutral-400">{currency}</span>
+                  </span>
+                  <Link to={`/booking?serviceId=${s.id}`}>
+                    <Button size="sm">{t('services.book')}</Button>
+                  </Link>
+                </div>
               </div>
             </Card>
             );
@@ -150,24 +153,26 @@ const HomePage = () => {
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featuredProducts.map((p) => (
-            <Card key={p.id} className="p-5">
-              <ShoppingBag className="h-6 w-6 text-gold-600" />
-              <h3 className="mt-3 font-display text-xl font-semibold text-neutral-900 dark:text-white">
-                {p.name}
-              </h3>
-              <span className="mt-2 block h-px w-10 bg-gradient-to-r from-gold-400 to-transparent" />
-              <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-                {p.description}
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="font-display text-lg font-semibold text-gold-700 dark:text-gold-300">
-                  {p.price} <span className="text-xs font-normal text-neutral-400">{currency}</span>
-                </span>
-                <Link to="/products">
-                  <Button variant="outline" size="sm">
-                    {t('home.shop')}
-                  </Button>
-                </Link>
+            <Card key={p.id} className="overflow-hidden">
+              <CardMedia src={p.image} alt={p.name} kind="product" className="h-44" />
+              <div className="p-5">
+                <h3 className="font-display text-xl font-semibold text-neutral-900 dark:text-white">
+                  {p.name}
+                </h3>
+                <span className="mt-2 block h-px w-10 bg-gradient-to-r from-gold-400 to-transparent" />
+                <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
+                  {p.description}
+                </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="font-display text-lg font-semibold text-gold-700 dark:text-gold-300">
+                    {p.price} <span className="text-xs font-normal text-neutral-400">{currency}</span>
+                  </span>
+                  <Link to="/products">
+                    <Button variant="outline" size="sm">
+                      {t('home.shop')}
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </Card>
           ))}
@@ -197,20 +202,23 @@ const HomePage = () => {
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {latestNews.map((n) => (
-            <Card key={n.id} className="p-6">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-gold-50 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-700 dark:bg-gold-900/40 dark:text-gold-300">
-                  {n.category}
-                </span>
-                <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                  {formatDate(n.createdAt)}
-                </span>
+            <Card key={n.id} className="overflow-hidden">
+              <CardMedia src={n.image} alt={n.title} kind="news" className="h-56" />
+              <div className="p-6">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-gold-50 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-700 dark:bg-gold-900/40 dark:text-gold-300">
+                    {n.category}
+                  </span>
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {formatDate(n.createdAt)}
+                  </span>
+                </div>
+                <h3 className="mt-3 font-display text-2xl font-semibold text-neutral-900 dark:text-white">
+                  {n.title}
+                </h3>
+                <span className="mt-2 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
+                <p className="mt-3 text-neutral-600 dark:text-neutral-300">{n.content}</p>
               </div>
-              <h3 className="mt-3 font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-                {n.title}
-              </h3>
-              <span className="mt-2 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
-              <p className="mt-3 text-neutral-600 dark:text-neutral-300">{n.content}</p>
             </Card>
           ))}
         </div>

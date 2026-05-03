@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="hapGold" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f5d27a" />
+      <stop offset="55%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#a87a1a" />
+    </linearGradient>
+    <linearGradient id="hapShine" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55" />
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#hapGold)" />
+  <circle cx="32" cy="32" r="30" fill="url(#hapShine)" />
+  <circle cx="32" cy="32" r="29.25" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="0.75" />
+  <g fill="#fff8e2">
+    <path d="M22 18h4v12h12V18h4v28h-4V34H26v12h-4z" />
+  </g>
+  <g fill="#fff8e2" opacity="0.95">
+    <path d="M48 14l1.2 3 3 1.2-3 1.2L48 22.6 46.8 19.4 43.8 18.2 46.8 17z" />
+    <path d="M14 44l0.8 2 2 0.8-2 0.8L14 49.6 13.2 47.6 11.2 46.8 13.2 46z" />
+  </g>
+</svg>

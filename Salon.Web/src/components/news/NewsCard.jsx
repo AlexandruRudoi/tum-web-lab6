@@ -2,12 +2,14 @@ import { Heart, Trash2, Pin, Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Card from '../common/Card';
 import Button from '../common/Button';
+import CardMedia from '../common/CardMedia';
 import { formatDate } from '../../utils/date';
 
 const NewsCard = ({ post, onToggleLike, onTogglePin, onRemove }) => {
   const { t } = useTranslation();
   return (
     <Card className={`flex h-full flex-col overflow-hidden ${post.pinned ? 'ring-2 ring-gold-400/60' : ''}`}>
+      <CardMedia src={post.image} alt={post.title} kind="news" className="h-48" />
       <div className="flex items-start justify-between p-5 pb-3">
         <div>
           <div className="flex items-center gap-2">

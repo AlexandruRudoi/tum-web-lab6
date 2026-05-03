@@ -8,7 +8,7 @@ export const seedNews = () => [
     category: 'Promotion',
     content:
       'Refresh your look this spring! Enjoy 20% off all haircuts and coloring services until the end of April.',
-    image: '',
+    image: 'https://picsum.photos/seed/news-spring/1200/600',
     pinned: true,
     liked: false,
     createdAt: nowIso(),
@@ -19,7 +19,7 @@ export const seedNews = () => [
     category: 'Announcement',
     content:
       'We are excited to welcome Maria, our new senior hair stylist with 10+ years of experience.',
-    image: '',
+    image: 'https://picsum.photos/seed/news-stylist/1200/600',
     pinned: false,
     liked: false,
     createdAt: nowIso(),
@@ -29,7 +29,7 @@ export const seedNews = () => [
     title: 'New skincare products available',
     category: 'Announcement',
     content: 'Discover our new line of hyaluronic and vitamin-C skincare — now in stock.',
-    image: '',
+    image: 'https://picsum.photos/seed/news-skincare/1200/600',
     pinned: false,
     liked: false,
     createdAt: nowIso(),
@@ -40,7 +40,7 @@ export const seedNews = () => [
     category: 'Schedule',
     content:
       'On May 1 and May 9 the salon will be closed. Bookings will resume normally the next day.',
-    image: '',
+    image: 'https://picsum.photos/seed/news-schedule/1200/600',
     pinned: false,
     liked: false,
     createdAt: nowIso(),

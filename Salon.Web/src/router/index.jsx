@@ -6,6 +6,7 @@ import ProductsPage from '../pages/ProductsPage';
 import NewsPage from '../pages/NewsPage';
 import BookingPage from '../pages/BookingPage';
 import DashboardPage from '../pages/DashboardPage';
+import ContactPage from '../pages/ContactPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: 'news', element: <NewsPage /> },
       { path: 'booking', element: <BookingPage /> },
       { path: 'dashboard', element: <DashboardPage /> },
+      { path: 'contact', element: <ContactPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

@@ -26,6 +26,7 @@
     "products": "Produse",
     "news": "Noutăți",
     "booking": "Programare",
+    "contact": "Contact",
     "dashboard": "Panou",
     "tagline": "salon · de · frumusețe",
     "toggleTheme": "Schimbă tema"
@@ -224,6 +225,34 @@
     "makeup": "Machiaj",
     "skincare": "Îngrijire ten",
     "browsLashes": "Sprâncene & gene"
+  },
+  "contact": {
+    "eyebrow": "Ia legătura",
+    "titlePart": "Ne-ar plăcea să",
+    "titleAccent": "auzim de tine",
+    "subtitle": "Întrebări, cereri personalizate sau idei de parteneriat — scrie-ne și îți răspundem în maximum o zi lucrătoare.",
+    "address": {
+      "title": "Vino la salon",
+      "line1": "Ştefan cel Mare 64",
+      "line2": "Chișinău, Republica Moldova"
+    },
+    "callUs": "Telefon & email",
+    "hoursTitle": "Program",
+    "hours": {
+      "weekdays": "Lun – Vin",
+      "saturday": "Sâmbătă",
+      "sunday": "Duminică",
+      "closed": "Închis"
+    },
+    "followUs": "Urmărește-ne",
+    "formEyebrow": "Trimite un mesaj",
+    "formTitle": "Spune-ne cum te putem ajuta",
+    "formSubtitle": "Modificări de programare, carduri cadou, pachete personalizate — te ascultăm.",
+    "emailLabel": "Email",
+    "messageLabel": "Mesaj",
+    "messagePlaceholder": "Ce ai vrea să întrebi?",
+    "sendBtn": "Trimite mesajul",
+    "sentMessage": "Mulțumim! Îți vom răspunde în curând."
   },
   "servicesData": {
     "signatureHaircut": {

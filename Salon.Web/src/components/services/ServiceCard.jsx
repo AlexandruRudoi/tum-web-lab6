@@ -2,11 +2,13 @@ import { Heart, Trash2, Clock, CalendarPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Card from '../common/Card';
 import Button from '../common/Button';
+import CardMedia from '../common/CardMedia';
 
 const ServiceCard = ({ service, onToggleLike, onRemove, onBook }) => {
   const { t } = useTranslation();
   return (
     <Card className="flex h-full flex-col overflow-hidden">
+      <CardMedia src={service.image} alt={service.name} kind="service" className="h-44" />
       <div className="flex items-start justify-between p-5 pb-3">
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-gold-300/70 bg-gold-50 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-700 dark:border-gold-700/50 dark:bg-gold-900/30 dark:text-gold-300">

@@ -26,6 +26,7 @@
     "products": "Products",
     "news": "News",
     "booking": "Booking",
+    "contact": "Contact",
     "dashboard": "Dashboard",
     "tagline": "beauty · salon",
     "toggleTheme": "Toggle color theme"
@@ -224,6 +225,34 @@
     "makeup": "Makeup",
     "skincare": "Skincare",
     "browsLashes": "Brows & Lashes"
+  },
+  "contact": {
+    "eyebrow": "Get in touch",
+    "titlePart": "We'd love to",
+    "titleAccent": "hear from you",
+    "subtitle": "Questions, custom requests or partnership ideas — drop us a line and we'll reply within one business day.",
+    "address": {
+      "title": "Visit us",
+      "line1": "Stefan cel Mare 64",
+      "line2": "Chișinău, Republic of Moldova"
+    },
+    "callUs": "Call & email",
+    "hoursTitle": "Opening hours",
+    "hours": {
+      "weekdays": "Mon – Fri",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "closed": "Closed"
+    },
+    "followUs": "Follow us",
+    "formEyebrow": "Send a message",
+    "formTitle": "Tell us how we can help",
+    "formSubtitle": "Booking changes, gift cards, custom packages — we're all ears.",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
+    "messagePlaceholder": "What would you like to ask?",
+    "sendBtn": "Send message",
+    "sentMessage": "Thanks! We'll get back to you shortly."
   },
   "servicesData": {
     "signatureHaircut": {
