@@ -19,6 +19,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<NewsService>();
 builder.Services.AddScoped<BookingService>();
 builder.Services.AddScoped<AuthenticationService>();
+builder.Services.AddScoped<LoginService>();
 
 // --- JWT ---
 var jwtKey = builder.Configuration["Jwt:Key"]!;
@@ -48,6 +49,10 @@ builder.Services.AddAuthorization(opts =>
     // Requires the appointments:manage permission claim (MANAGER or ADMIN)
     opts.AddPolicy("CanManageAppointments", p =>
         p.RequireClaim("permission", AppPermission.ManageAppointments));
+
+    // Requires the users:manage permission claim (ADMIN only)
+    opts.AddPolicy("CanManageUsers", p =>
+        p.RequireClaim("permission", AppPermission.ManageUsers));
 });
 
 // --- Controllers + Swagger ---

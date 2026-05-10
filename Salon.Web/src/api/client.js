@@ -5,8 +5,19 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5144';
 let _token = null;
 let _role = null;
 let _tokenExpiry = 0;
+let _user = null; // { name, email } — only set for credential-based logins
 
 const STORAGE_KEY = 'salon:auth';
+
+/** Decode a JWT payload without verifying the signature (display only). */
+export const parseJwt = (token) => {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return null;
+  }
+};
 
 // Restore from localStorage on first import.
 try {
@@ -17,18 +28,23 @@ try {
       _token = parsed.token;
       _role = parsed.role;
       _tokenExpiry = parsed.expiry;
+      _user = parsed.user ?? null;
     }
   }
 } catch {
   // ignore
 }
 
-export const setToken = (token, role, expiresInSeconds) => {
+export const setToken = (token, role, expiresInSeconds, user = null) => {
   _token = token;
   _role = role;
+  _user = user;
   _tokenExpiry = Date.now() + expiresInSeconds * 1000 - 5_000; // 5 s buffer
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, role, expiry: _tokenExpiry }));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ token, role, expiry: _tokenExpiry, user }),
+    );
   } catch {
     // ignore quota errors
   }
@@ -37,11 +53,13 @@ export const setToken = (token, role, expiresInSeconds) => {
 export const clearToken = () => {
   _token = null;
   _role = null;
+  _user = null;
   _tokenExpiry = 0;
   localStorage.removeItem(STORAGE_KEY);
 };
 
 export const getTokenRole = () => _role;
+export const getTokenUser = () => _user;
 export const isTokenValid = () => Boolean(_token) && Date.now() < _tokenExpiry;
 
 // ── Core fetch wrapper ────────────────────────────────────────────────────────

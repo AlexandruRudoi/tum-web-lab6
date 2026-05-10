@@ -19,6 +19,7 @@ public class SalonDbSeeder
         await SeedServicesAsync();
         await SeedProductsAsync();
         await SeedNewsAsync();
+        await SeedUsersAsync();
     }
 
     private async Task SeedServicesAsync()
@@ -61,5 +62,19 @@ public class SalonDbSeeder
         await _db.News.AddRangeAsync(seeds);
         await _db.SaveChangesAsync();
         _logger.LogInformation("Seeded {Count} news items.", seeds.Count());
+    }
+
+    private async Task SeedUsersAsync()
+    {
+        if (await _db.Users.AnyAsync())
+        {
+            _logger.LogInformation("Users already seeded — skipping.");
+            return;
+        }
+
+        var seeds = UserSeeder.GetSeed();
+        await _db.Users.AddRangeAsync(seeds);
+        await _db.SaveChangesAsync();
+        _logger.LogInformation("Seeded {Count} users.", seeds.Count());
     }
 }

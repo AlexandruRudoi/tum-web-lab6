@@ -15,7 +15,7 @@ public static class ServiceSeeder
             Price = 45m,
             DurationMinutes = 60,
             Category = ServiceCategory.Hair,
-            ImageUrl = "https://picsum.photos/seed/haircut-women/800/500",
+            ImageUrl = "/images/services/signature_haircut.jpg",
             LikesCount = 12,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -28,7 +28,7 @@ public static class ServiceSeeder
             Price = 25m,
             DurationMinutes = 30,
             Category = ServiceCategory.Hair,
-            ImageUrl = "https://picsum.photos/seed/haircut-men/800/500",
+            ImageUrl = "/images/services/signature_haircut.jpg",
             LikesCount = 8,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -41,7 +41,7 @@ public static class ServiceSeeder
             Price = 80m,
             DurationMinutes = 90,
             Category = ServiceCategory.Hair,
-            ImageUrl = "https://picsum.photos/seed/hair-color/800/500",
+            ImageUrl = "/images/services/hair_coloring.jpg",
             LikesCount = 20,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -54,7 +54,7 @@ public static class ServiceSeeder
             Price = 20m,
             DurationMinutes = 45,
             Category = ServiceCategory.Nails,
-            ImageUrl = "https://picsum.photos/seed/manicure/800/500",
+            ImageUrl = "/images/services/classic_manicure.jpg",
             LikesCount = 15,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -67,7 +67,7 @@ public static class ServiceSeeder
             Price = 35m,
             DurationMinutes = 60,
             Category = ServiceCategory.Nails,
-            ImageUrl = "https://picsum.photos/seed/gel-manicure/800/500",
+            ImageUrl = "/images/services/spa_pedicure.jpg",
             LikesCount = 22,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -80,7 +80,7 @@ public static class ServiceSeeder
             Price = 60m,
             DurationMinutes = 75,
             Category = ServiceCategory.Skin,
-            ImageUrl = "https://picsum.photos/seed/facial-treatment/800/500",
+            ImageUrl = "/images/services/hydrating_facial.jpg",
             LikesCount = 10,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -93,7 +93,7 @@ public static class ServiceSeeder
             Price = 150m,
             DurationMinutes = 120,
             Category = ServiceCategory.Makeup,
-            ImageUrl = "https://picsum.photos/seed/bridal-makeup/800/500",
+            ImageUrl = "/images/services/evening_makeup.jpg",
             LikesCount = 30,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -106,7 +106,7 @@ public static class ServiceSeeder
             Price = 15m,
             DurationMinutes = 20,
             Category = ServiceCategory.Other,
-            ImageUrl = "https://picsum.photos/seed/eyebrow-shaping/800/500",
+            ImageUrl = "/images/services/eyebrow_shaping.jpg",
             LikesCount = 5,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
