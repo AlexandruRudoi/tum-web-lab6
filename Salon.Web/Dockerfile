@@ -11,7 +11,9 @@ WORKDIR /app
 # `npm ci`, otherwise npm would skip devDependencies (vite, @vitejs/plugin-react)
 # and the build would fail.
 ARG MODE=production
+ARG VITE_API_URL=/api
 ENV VITE_MODE=$MODE
+ENV VITE_API_URL=$VITE_API_URL
 
 COPY package.json package-lock.json* ./
 RUN npm ci --silent

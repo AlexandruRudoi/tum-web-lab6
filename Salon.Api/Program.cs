@@ -95,10 +95,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // --- CORS ---
+var allowedOrigins = builder.Configuration["Cors:AllowedOrigins"]?.Split(',')
+    ?? ["http://localhost:5173", "http://localhost:8080", "http://localhost"];
 builder.Services.AddCors(options =>
     options.AddPolicy("SalonWeb", policy =>
         policy
-            .WithOrigins("http://localhost:5173", "http://localhost:8080", "http://localhost")
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()));
 
