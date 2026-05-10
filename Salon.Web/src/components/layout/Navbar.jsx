@@ -1,11 +1,24 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Moon, Sun, ShieldCheck, LogOut } from 'lucide-react';
+import { Moon, Sun, ShieldCheck, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
 import { useAuth } from '../../context/useEntityContexts';
 import LanguageSwitcher from '../common/LanguageSwitcher';
 import { useCanManage } from '../../config/permissions';
 import logoUrl from '../../assets/logo.svg';
+
+const ROLES = [
+  { value: 'VISITOR', label: 'Visitor', desc: 'Browse only' },
+  { value: 'MANAGER', label: 'Manager', desc: 'Approve appointments' },
+  { value: 'ADMIN',   label: 'Admin',   desc: 'Full access' },
+];
+
+const roleColors = {
+  VISITOR: 'text-neutral-500 dark:text-neutral-400',
+  MANAGER: 'text-blue-600 dark:text-blue-400',
+  ADMIN:   'text-gold-700 dark:text-gold-300',
+};
 
 const linkDefs = [
   { to: '/', key: 'home', end: true },
@@ -21,7 +34,16 @@ const Navbar = () => {
   const { isDark, toggleMode } = useThemeContext();
   const { t } = useTranslation();
   const canManage = useCanManage();
-  const { isAdmin, login, logout } = useAuth();
+  const { role, login, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  const currentRole = role ?? 'VISITOR';
+
+  const handleSelect = (value) => {
+    setOpen(false);
+    if (value === 'VISITOR') logout();
+    else login(value);
+  };
 
   return (
     <header className="sticky top-0 z-sticky border-b border-gold-300/70 bg-neutral-50/85 backdrop-blur-md dark:border-gold-700/50 dark:bg-neutral-950/85">
@@ -68,28 +90,38 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
 
-          {/* Admin role toggle */}
-          {isAdmin ? (
+          {/* Role switcher dropdown */}
+          <div className="relative">
             <button
               type="button"
-              onClick={logout}
-              title="Exit admin mode"
-              className="flex items-center gap-1.5 rounded-full border border-gold-400 bg-gold-50 px-3 py-1.5 text-xs font-semibold text-gold-800 transition-colors hover:bg-gold-100 dark:border-gold-600 dark:bg-gold-900/30 dark:text-gold-300 dark:hover:bg-gold-900/50"
+              onClick={() => setOpen((v) => !v)}
+              className="flex items-center gap-1.5 rounded-full border border-neutral-300/70 bg-white/70 px-3 py-1.5 text-xs font-semibold transition-colors hover:border-gold-400 dark:border-neutral-700/50 dark:bg-neutral-900/70 dark:hover:border-gold-600"
             >
-              <LogOut className="h-3.5 w-3.5" />
-              Admin
+              <ShieldCheck className={`h-3.5 w-3.5 ${roleColors[currentRole]}`} />
+              <span className={roleColors[currentRole]}>{currentRole.charAt(0) + currentRole.slice(1).toLowerCase()}</span>
+              <ChevronDown className={`h-3 w-3 text-neutral-400 transition-transform ${open ? 'rotate-180' : ''}`} />
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => login('ADMIN')}
-              title="Enter admin mode"
-              className="flex items-center gap-1.5 rounded-full border border-neutral-300/70 bg-white/70 px-3 py-1.5 text-xs font-semibold text-neutral-600 transition-colors hover:border-gold-400 hover:text-gold-700 dark:border-neutral-700/50 dark:bg-neutral-900/70 dark:text-neutral-400 dark:hover:text-gold-300"
-            >
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Admin
-            </button>
-          )}
+
+            {open && (
+              <>
+                {/* backdrop */}
+                <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+                <div className="absolute right-0 z-50 mt-2 w-44 rounded-xl border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-900">
+                  {ROLES.map(({ value, label, desc }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => handleSelect(value)}
+                      className={`flex w-full flex-col items-start px-4 py-2.5 text-left transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800 ${value === currentRole ? 'bg-neutral-50 dark:bg-neutral-800' : ''}`}
+                    >
+                      <span className={`text-xs font-semibold ${roleColors[value]}`}>{label}</span>
+                      <span className="text-[11px] text-neutral-400 dark:text-neutral-500">{desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
           <button
             type="button"

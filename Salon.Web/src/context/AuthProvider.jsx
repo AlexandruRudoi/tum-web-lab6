@@ -60,10 +60,11 @@ export const AuthProvider = ({ children }) => {
   }, [scheduleRefresh]);
 
   const isAdmin = role === 'ADMIN';
+  const isManager = role === 'MANAGER' || role === 'ADMIN';
 
   const value = useMemo(
-    () => ({ role, isAdmin, isLoading, login, logout }),
-    [role, isAdmin, isLoading, login, logout],
+    () => ({ role, isAdmin, isManager, isLoading, login, logout }),
+    [role, isAdmin, isManager, isLoading, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

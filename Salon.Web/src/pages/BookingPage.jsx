@@ -4,6 +4,7 @@ import { CalendarPlus, Clock, User, Phone, Trash2, CheckCircle2, XCircle } from 
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useBookings, useServices } from '../context/useEntityContexts';
+import { useCanApproveBookings } from '../config/permissions';
 import { translateService } from '../i18n/translateEntity';
 import { BOOKING_STATUS } from '../data/entities';
 import Card from '../components/common/Card';
@@ -24,6 +25,7 @@ const todayIso = () => new Date().toISOString().slice(0, 10);
 const BookingPage = () => {
   const { services } = useServices();
   const { bookings, addBooking, removeBooking, setBookingStatus } = useBookings();
+  const canApprove = useCanApproveBookings();
   const [params, setParams] = useSearchParams();
   const { t } = useTranslation();
 
@@ -259,7 +261,7 @@ const BookingPage = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-1">
-                        {b.status !== BOOKING_STATUS.CONFIRMED && (
+                        {canApprove && b.status !== BOOKING_STATUS.CONFIRMED && (
                           <Button
                             variant="ghost"
                             size="icon"
@@ -270,7 +272,7 @@ const BookingPage = () => {
                             <CheckCircle2 className="h-4 w-4" />
                           </Button>
                         )}
-                        {b.status !== BOOKING_STATUS.CANCELLED && (
+                        {canApprove && b.status !== BOOKING_STATUS.CANCELLED && (
                           <Button
                             variant="ghost"
                             size="icon"
