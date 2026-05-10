@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Salon.Domain.Permissions;
 using Salon.Postgres;
 using Salon.Services;
 
@@ -38,7 +39,16 @@ builder.Services
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opts =>
+{
+    // Requires the content:manage permission claim (ADMIN only)
+    opts.AddPolicy("CanManageContent", p =>
+        p.RequireClaim("permission", AppPermission.ManageContent));
+
+    // Requires the appointments:manage permission claim (MANAGER or ADMIN)
+    opts.AddPolicy("CanManageAppointments", p =>
+        p.RequireClaim("permission", AppPermission.ManageAppointments));
+});
 
 // --- Controllers + Swagger ---
 builder.Services.AddControllers();

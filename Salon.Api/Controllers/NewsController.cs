@@ -27,18 +27,18 @@ public class NewsController : ControllerBase
         return news is null ? NotFound() : Ok(news.ToDto());
     }
 
-    /// <summary>Create a news item. Requires ADMIN role.</summary>
+    /// <summary>Create a news item. Requires content:manage permission.</summary>
     [HttpPost]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Create([FromBody] CreateNewsDto dto)
     {
         var created = await _svc.CreateAsync(dto.ToEntity());
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
-    /// <summary>Update a news item. Requires ADMIN role.</summary>
+    /// <summary>Update a news item. Requires content:manage permission.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateNewsDto dto)
     {
         try
@@ -52,18 +52,18 @@ public class NewsController : ControllerBase
         catch (KeyNotFoundException) { return NotFound(); }
     }
 
-    /// <summary>Delete a news item. Requires ADMIN role.</summary>
+    /// <summary>Delete a news item. Requires content:manage permission.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try { await _svc.DeleteAsync(id); return NoContent(); }
         catch (KeyNotFoundException) { return NotFound(); }
     }
 
-    /// <summary>Toggle pin on a news item. Requires ADMIN role.</summary>
+    /// <summary>Toggle pin on a news item. Requires content:manage permission.</summary>
     [HttpPost("{id:guid}/pin")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Pin(Guid id)
     {
         try { return Ok((await _svc.TogglePinAsync(id)).ToDto()); }

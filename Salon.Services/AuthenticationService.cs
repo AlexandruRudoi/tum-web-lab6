@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Salon.Domain.Permissions;
 
 namespace Salon.Services;
 
@@ -18,14 +19,19 @@ public class AuthenticationService
             Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        // Base claims
+        var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Role, role),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Iat,
+            new(ClaimTypes.Role, role),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat,
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
                 ClaimValueTypes.Integer64)
         };
+
+        // Append fine-grained permission claims based on the role
+        foreach (var permission in AppPermission.ForRole(role))
+            claims.Add(new Claim("permission", permission));
 
         var expiry = int.Parse(_config["Jwt:ExpirySeconds"] ?? "60");
 

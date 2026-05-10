@@ -30,18 +30,18 @@ public class ServicesController : ControllerBase
         return service is null ? NotFound() : Ok(service.ToDto());
     }
 
-    /// <summary>Create a new service. Requires ADMIN role.</summary>
+    /// <summary>Create a new service. Requires content:manage permission.</summary>
     [HttpPost]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Create([FromBody] CreateServiceDto dto)
     {
         var created = await _svc.CreateAsync(dto.ToEntity());
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
-    /// <summary>Update a service. Requires ADMIN role.</summary>
+    /// <summary>Update a service. Requires content:manage permission.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateServiceDto dto)
     {
         try
@@ -56,9 +56,9 @@ public class ServicesController : ControllerBase
         catch (KeyNotFoundException) { return NotFound(); }
     }
 
-    /// <summary>Delete a service. Requires ADMIN role.</summary>
+    /// <summary>Delete a service. Requires content:manage permission.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try { await _svc.DeleteAsync(id); return NoContent(); }

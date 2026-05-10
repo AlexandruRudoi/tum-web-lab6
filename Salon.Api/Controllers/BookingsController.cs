@@ -13,15 +13,15 @@ public class BookingsController : ControllerBase
     private readonly BookingService _svc;
     public BookingsController(BookingService svc) => _svc = svc;
 
-    /// <summary>Get all bookings (paginated). Requires ADMIN role.</summary>
+    /// <summary>Get all bookings (paginated). Requires appointments:manage permission.</summary>
     [HttpGet]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageAppointments")]
     public async Task<IActionResult> GetAll([FromQuery] int limit = 20, [FromQuery] int offset = 0)
         => Ok((await _svc.GetAllAsync(limit, offset)).ToPagedDto(b => b.ToDto()));
 
-    /// <summary>Get a booking by ID. Requires ADMIN role.</summary>
+    /// <summary>Get a booking by ID. Requires appointments:manage permission.</summary>
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageAppointments")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var booking = await _svc.GetByIdAsync(id);
@@ -36,18 +36,18 @@ public class BookingsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
-    /// <summary>Update booking status. Requires ADMIN role.</summary>
+    /// <summary>Update booking status. Requires appointments:manage permission.</summary>
     [HttpPatch("{id:guid}/status")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageAppointments")]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateBookingStatusDto dto)
     {
         try { return Ok((await _svc.UpdateStatusAsync(id, dto.Status)).ToDto()); }
         catch (KeyNotFoundException) { return NotFound(); }
     }
 
-    /// <summary>Delete a booking. Requires ADMIN role.</summary>
+    /// <summary>Delete a booking. Requires appointments:manage permission.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageAppointments")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try { await _svc.DeleteAsync(id); return NoContent(); }

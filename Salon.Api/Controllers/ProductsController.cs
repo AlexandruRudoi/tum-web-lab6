@@ -27,18 +27,18 @@ public class ProductsController : ControllerBase
         return product is null ? NotFound() : Ok(product.ToDto());
     }
 
-    /// <summary>Create a product. Requires ADMIN role.</summary>
+    /// <summary>Create a product. Requires content:manage permission.</summary>
     [HttpPost]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
     {
         var created = await _svc.CreateAsync(dto.ToEntity());
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
-    /// <summary>Update a product. Requires ADMIN role.</summary>
+    /// <summary>Update a product. Requires content:manage permission.</summary>
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductDto dto)
     {
         try
@@ -53,9 +53,9 @@ public class ProductsController : ControllerBase
         catch (KeyNotFoundException) { return NotFound(); }
     }
 
-    /// <summary>Delete a product. Requires ADMIN role.</summary>
+    /// <summary>Delete a product. Requires content:manage permission.</summary>
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "ADMIN")]
+    [Authorize(Policy = "CanManageContent")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try { await _svc.DeleteAsync(id); return NoContent(); }
