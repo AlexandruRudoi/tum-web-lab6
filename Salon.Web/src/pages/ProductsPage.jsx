@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useProducts } from '../context/useEntityContexts';
 import { useFilterSearch } from '../hooks/useFilterSearch';
 import { PRODUCT_CATEGORIES } from '../data/entities';
-import { CAN_MANAGE } from '../config/permissions';
+import { useCanManage } from '../config/permissions';
 import SearchBar from '../components/common/SearchBar';
 import CategoryFilter from '../components/common/CategoryFilter';
 import EmptyState from '../components/common/EmptyState';
@@ -17,6 +17,7 @@ import ProductFormModal from '../components/products/ProductFormModal';
 const ProductsPage = () => {
   const { products, addProduct, removeProduct, toggleLike } = useProducts();
   const { t } = useTranslation();
+  const canManage = useCanManage();
 
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState(null);
@@ -61,7 +62,7 @@ const ProductsPage = () => {
             {t('products.subtitle')}
           </p>
         </div>
-        {CAN_MANAGE && (
+        {canManage && (
           <Button onClick={() => setFormOpen(true)}>
             <Plus className="h-4 w-4" />
             {t('products.addBtn')}
@@ -97,7 +98,7 @@ const ProductsPage = () => {
           title={t('products.emptyTitle')}
           description={t('products.emptyDescription')}
           action={
-            CAN_MANAGE ? (
+            canManage ? (
               <Button onClick={() => setFormOpen(true)}>
                 <Plus className="h-4 w-4" />
                 {t('products.addBtn')}
@@ -112,7 +113,7 @@ const ProductsPage = () => {
               key={product.id}
               product={product}
               onToggleLike={toggleLike}
-              onRemove={CAN_MANAGE ? () => setPendingDelete(product) : undefined}
+              onRemove={canManage ? () => setPendingDelete(product) : undefined}
             />
           ))}
         </div>
