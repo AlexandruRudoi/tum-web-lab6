@@ -11,6 +11,7 @@ public class SalonDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<News> News => Set<News>();
     public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<AppUser> Users => Set<AppUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

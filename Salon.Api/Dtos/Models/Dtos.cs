@@ -57,3 +57,15 @@ public record UpdateBookingStatusDto(BookingStatus Status);
 
 // --- Paged ---
 public record PagedDto<T>(IEnumerable<T> Items, int Total, int Limit, int Offset);
+
+// --- Auth ---
+public record LoginRequestDto(string Email, string Password);
+
+public record LoginResponseDto(
+    string Token, int ExpiresInSeconds,
+    string Name, string Email, string Role);
+
+// --- Users ---
+public record AppUserDto(Guid Id, string Name, string Email, string Role, DateTime CreatedAt);
+
+public record UpdateUserRoleDto(string Role);

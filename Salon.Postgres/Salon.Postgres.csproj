@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Salon.Domain\Salon.Domain.csproj" />
     <ProjectReference Include="..\Salon.Repositories\Salon.Repositories.csproj" />
+    <ProjectReference Include="..\Salon.Services\Salon.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -11,6 +12,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
