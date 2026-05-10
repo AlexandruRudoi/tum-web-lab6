@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ShieldCheck, Mail, Lock, LogIn } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/useEntityContexts';
 import Button from '../components/common/Button';
 import logoUrl from '../assets/logo.svg';
@@ -14,7 +13,6 @@ const DEMO_ACCOUNTS = [
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,12 +31,6 @@ const LoginPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemo = (acc) => {
-    setEmail(acc.email);
-    setPassword(acc.password);
-    setError('');
   };
 
   return (
@@ -60,27 +52,15 @@ const LoginPage = () => {
           </h1>
         </div>
 
-        {/* Demo account quick-fill */}
-        <div className="mb-6">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
-            Demo accounts
+        {/* Demo credentials reference */}
+        <div className="mb-6 rounded-xl border border-neutral-200/70 bg-neutral-50/80 px-4 py-3 dark:border-neutral-700/50 dark:bg-neutral-800/50">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
+            Demo credentials
           </p>
-          <div className="flex gap-2">
+          <div className="space-y-1.5">
             {DEMO_ACCOUNTS.map((acc) => (
-              <button
-                key={acc.label}
-                type="button"
-                onClick={() => fillDemo(acc)}
-                className={`flex-1 rounded-xl border border-neutral-200/70 bg-neutral-50 py-2 text-xs font-semibold transition-colors hover:border-gold-400 dark:border-neutral-700/50 dark:bg-neutral-800 ${acc.color}`}
-              >
-                {acc.label}
-              </button>
-            ))}
-          </div>
-          <div className="mt-2 space-y-1">
-            {DEMO_ACCOUNTS.map((acc) => (
-              <p key={acc.label} className="text-[11px] text-neutral-400 dark:text-neutral-500">
-                <span className={`font-semibold ${acc.color}`}>{acc.label}:</span>{' '}
+              <p key={acc.label} className="font-mono text-xs text-neutral-600 dark:text-neutral-300">
+                <span className={`font-semibold not-italic ${acc.color}`}>{acc.label}:</span>{' '}
                 {acc.email} / {acc.password}
               </p>
             ))}

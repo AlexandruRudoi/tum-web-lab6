@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
-import { Moon, Sun, ShieldCheck, LogOut, LogIn } from 'lucide-react';
+import { Moon, Sun, ShieldCheck, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
 import { useAuth } from '../../context/useEntityContexts';
@@ -75,7 +75,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
 
-          {isAuthenticated ? (
+          {isAuthenticated && (
             /* Logged-in user pill */
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1.5 dark:border-neutral-700/50 dark:bg-neutral-900/70">
@@ -94,15 +94,6 @@ const Navbar = () => {
                 Sign out
               </button>
             </div>
-          ) : (
-            /* Anonymous visitor — show login link */
-            <Link
-              to="/login"
-              className="flex items-center gap-1.5 rounded-full border border-neutral-300/70 bg-white/70 px-3 py-1.5 text-xs font-semibold text-neutral-600 transition-colors hover:border-gold-400 hover:text-gold-700 dark:border-neutral-700/50 dark:bg-neutral-900/70 dark:text-neutral-400 dark:hover:text-gold-300"
-            >
-              <LogIn className="h-3.5 w-3.5" />
-              Staff Login
-            </Link>
           )}
 
           <button
