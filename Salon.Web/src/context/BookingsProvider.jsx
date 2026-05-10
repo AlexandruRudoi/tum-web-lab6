@@ -1,46 +1,52 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BookingsContext } from './entity-contexts';
-import { useEntityState } from '../hooks/useEntityState';
-import { STORAGE_KEYS, BOOKING_STATUS } from '../data/entities';
-import { seedBookings } from '../data/seed/bookings';
-import { createId } from '../utils/id';
-import { nowIso } from '../utils/date';
+import { bookingsApi } from '../api/bookingsApi';
 
 export const BookingsProvider = ({ children }) => {
-  const state = useEntityState(STORAGE_KEYS.BOOKINGS, seedBookings);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const create = useCallback(
-    (data) => {
-      const booking = {
-        id: createId(),
-        status: BOOKING_STATUS.PENDING,
-        notes: '',
-        createdAt: nowIso(),
-        ...data,
-      };
-      state.add(booking);
-      return booking;
-    },
-    [state],
-  );
+  useEffect(() => {
+    bookingsApi
+      .getAll()
+      .then(setBookings)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
-  const setStatus = useCallback(
-    (id, status) => {
-      state.update(id, { status });
-    },
-    [state],
-  );
+  const addBooking = useCallback(async (data) => {
+    const created = await bookingsApi.create(data);
+    setBookings((prev) => [created, ...prev]);
+    return created;
+  }, []);
+
+  const updateBooking = useCallback((id, patch) => {
+    setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
+  }, []);
+
+  const removeBooking = useCallback(async (id) => {
+    await bookingsApi.delete(id);
+    setBookings((prev) => prev.filter((b) => b.id !== id));
+  }, []);
+
+  const setBookingStatus = useCallback(async (id, status) => {
+    const updated = await bookingsApi.updateStatus(id, status);
+    setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
+  }, []);
+
+  const resetBookings = useCallback(async () => {
+    setLoading(true);
+    try {
+      const fresh = await bookingsApi.getAll();
+      setBookings(fresh);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const value = useMemo(
-    () => ({
-      bookings: state.items,
-      addBooking: create,
-      updateBooking: state.update,
-      removeBooking: state.remove,
-      setBookingStatus: setStatus,
-      resetBookings: state.reset,
-    }),
-    [state, create, setStatus],
+    () => ({ bookings, loading, addBooking, updateBooking, removeBooking, setBookingStatus, resetBookings }),
+    [bookings, loading, addBooking, updateBooking, removeBooking, setBookingStatus, resetBookings],
   );
 
   return <BookingsContext.Provider value={value}>{children}</BookingsContext.Provider>;

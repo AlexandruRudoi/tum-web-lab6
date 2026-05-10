@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNews } from '../context/useEntityContexts';
 import { useFilterSearch } from '../hooks/useFilterSearch';
 import { NEWS_CATEGORIES } from '../data/entities';
-import { CAN_MANAGE } from '../config/permissions';
+import { useCanManage } from '../config/permissions';
 import SearchBar from '../components/common/SearchBar';
 import CategoryFilter from '../components/common/CategoryFilter';
 import EmptyState from '../components/common/EmptyState';
@@ -17,6 +17,7 @@ import NewsFormModal from '../components/news/NewsFormModal';
 const NewsPage = () => {
   const { news, addNews, removeNews, toggleLike, togglePin } = useNews();
   const { t } = useTranslation();
+  const canManage = useCanManage();
 
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState(null);
@@ -70,7 +71,7 @@ const NewsPage = () => {
             {t('news.subtitle')}
           </p>
         </div>
-        {CAN_MANAGE && (
+        {canManage && (
           <Button onClick={() => setFormOpen(true)}>
             <Plus className="h-4 w-4" />
             {t('news.addBtn')}
@@ -106,7 +107,7 @@ const NewsPage = () => {
           title={t('news.emptyTitle')}
           description={t('news.emptyDescription')}
           action={
-            CAN_MANAGE ? (
+            canManage ? (
               <Button onClick={() => setFormOpen(true)}>
                 <Plus className="h-4 w-4" />
                 {t('news.addBtn')}
@@ -122,7 +123,7 @@ const NewsPage = () => {
               post={post}
               onToggleLike={toggleLike}
               onTogglePin={togglePin}
-              onRemove={CAN_MANAGE ? () => setPendingDelete(post) : undefined}
+              onRemove={canManage ? () => setPendingDelete(post) : undefined}
             />
           ))}
         </div>

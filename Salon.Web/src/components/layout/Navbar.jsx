@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, ShieldCheck, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
+import { useAuth } from '../../context/useEntityContexts';
 import LanguageSwitcher from '../common/LanguageSwitcher';
-import { CAN_MANAGE } from '../../config/permissions';
+import { useCanManage } from '../../config/permissions';
 import logoUrl from '../../assets/logo.svg';
 
 const linkDefs = [
@@ -19,6 +20,8 @@ const linkDefs = [
 const Navbar = () => {
   const { isDark, toggleMode } = useThemeContext();
   const { t } = useTranslation();
+  const canManage = useCanManage();
+  const { isAdmin, login, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-sticky border-b border-gold-300/70 bg-neutral-50/85 backdrop-blur-md dark:border-gold-700/50 dark:bg-neutral-950/85">
@@ -41,7 +44,7 @@ const Navbar = () => {
 
         <nav className="hidden items-center gap-1 md:flex">
           {linkDefs
-            .filter(({ requiresManage }) => !requiresManage || CAN_MANAGE)
+            .filter(({ requiresManage }) => !requiresManage || canManage)
             .map(({ to, key, end }) => (
             <NavLink
               key={to}
@@ -64,6 +67,30 @@ const Navbar = () => {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
+
+          {/* Admin role toggle */}
+          {isAdmin ? (
+            <button
+              type="button"
+              onClick={logout}
+              title="Exit admin mode"
+              className="flex items-center gap-1.5 rounded-full border border-gold-400 bg-gold-50 px-3 py-1.5 text-xs font-semibold text-gold-800 transition-colors hover:bg-gold-100 dark:border-gold-600 dark:bg-gold-900/30 dark:text-gold-300 dark:hover:bg-gold-900/50"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Admin
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => login('ADMIN')}
+              title="Enter admin mode"
+              className="flex items-center gap-1.5 rounded-full border border-neutral-300/70 bg-white/70 px-3 py-1.5 text-xs font-semibold text-neutral-600 transition-colors hover:border-gold-400 hover:text-gold-700 dark:border-neutral-700/50 dark:bg-neutral-900/70 dark:text-neutral-400 dark:hover:text-gold-300"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Admin
+            </button>
+          )}
+
           <button
             type="button"
             onClick={toggleMode}
