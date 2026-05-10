@@ -1,6 +1,57 @@
-name: salon-web-prod
+name: salon-prod
 
 services:
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: salon-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_DB: salon
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d salon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - salon-net
+
+  # ── API (ASP.NET Core 9) ────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Salon.Api/Dockerfile
+    image: salon-api:prod
+    container_name: salon-api-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: >-
+        Host=postgres;Port=5432;Database=salon;Username=postgres;Password=${POSTGRES_PASSWORD:-changeme}
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: salon-api
+      Jwt__Audience: salon-web
+      Jwt__ExpirySeconds: 3600
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - salon-net
+
+  # ── Web (Vite → nginx) ──────────────────────────────────────────────────────
   web:
     build:
       context: ./Salon.Web
@@ -8,11 +59,14 @@ services:
       target: runtime
       args:
         MODE: production
+        VITE_API_URL: /api
     image: salon-web:prod
     container_name: salon-web-prod
     ports:
       - "80:80"
     restart: always
+    depends_on:
+      - api
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
       interval: 30s
@@ -27,3 +81,12 @@ services:
         reservations:
           cpus: "0.25"
           memory: 64M
+    networks:
+      - salon-net
+
+volumes:
+  postgres_data:
+
+networks:
+  salon-net:
+    driver: bridge
