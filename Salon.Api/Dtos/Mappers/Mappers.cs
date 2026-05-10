@@ -38,7 +38,7 @@ public static class Mappers
         {
             ClientName = dto.ClientName, ClientEmail = dto.ClientEmail,
             ClientPhone = dto.ClientPhone, ServiceId = dto.ServiceId,
-            AppointmentAt = dto.AppointmentAt, Notes = dto.Notes
+            AppointmentAt = DateTime.SpecifyKind(dto.AppointmentAt, DateTimeKind.Utc), Notes = dto.Notes
         };
 
     public static PagedDto<TDto> ToPagedDto<T, TDto>(

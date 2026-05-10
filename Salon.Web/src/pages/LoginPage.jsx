@@ -5,11 +5,6 @@ import { useAuth } from '../context/useEntityContexts';
 import Button from '../components/common/Button';
 import logoUrl from '../assets/logo.svg';
 
-const DEMO_ACCOUNTS = [
-  { label: 'Manager', email: 'manager@salon.com', password: 'Manager123!', color: 'text-blue-600 dark:text-blue-400' },
-  { label: 'Admin',   email: 'admin@salon.com',   password: 'Admin123!',   color: 'text-gold-700 dark:text-gold-300' },
-];
-
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -50,21 +45,6 @@ const LoginPage = () => {
           <h1 className="font-display text-2xl font-semibold text-neutral-900 dark:text-white">
             Staff Login
           </h1>
-        </div>
-
-        {/* Demo credentials reference */}
-        <div className="mb-6 rounded-xl border border-neutral-200/70 bg-neutral-50/80 px-4 py-3 dark:border-neutral-700/50 dark:bg-neutral-800/50">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400">
-            Demo credentials
-          </p>
-          <div className="space-y-1.5">
-            {DEMO_ACCOUNTS.map((acc) => (
-              <p key={acc.label} className="font-mono text-xs text-neutral-600 dark:text-neutral-300">
-                <span className={`font-semibold not-italic ${acc.color}`}>{acc.label}:</span>{' '}
-                {acc.email} / {acc.password}
-              </p>
-            ))}
-          </div>
         </div>
 
         {/* Form */}

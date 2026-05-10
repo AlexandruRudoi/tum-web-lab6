@@ -1,5 +1,6 @@
+import { useState, useRef, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Moon, Sun, ShieldCheck, LogOut } from 'lucide-react';
+import { Moon, Sun, ShieldCheck, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeContext } from '../../context/useThemeContext';
 import { useAuth } from '../../context/useEntityContexts';
@@ -27,8 +28,18 @@ const Navbar = () => {
   const { t } = useTranslation();
   const canManage = useCanManage();
   const { role, user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const isAuthenticated = role === 'MANAGER' || role === 'ADMIN';
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   return (
     <header className="sticky top-0 z-sticky border-b border-gold-300/70 bg-neutral-50/85 backdrop-blur-md dark:border-gold-700/50 dark:bg-neutral-950/85">
@@ -76,23 +87,41 @@ const Navbar = () => {
           <LanguageSwitcher />
 
           {isAuthenticated && (
-            /* Logged-in user pill */
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1.5 dark:border-neutral-700/50 dark:bg-neutral-900/70">
+            /* Logged-in user dropdown */
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                className="flex items-center gap-1.5 rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1.5 dark:border-neutral-700/50 dark:bg-neutral-900/70"
+              >
                 <ShieldCheck className={`h-3.5 w-3.5 ${roleColors[role] ?? 'text-neutral-500'}`} />
                 <span className={`text-xs font-semibold ${roleColors[role] ?? 'text-neutral-600'}`}>
                   {user?.name ?? role}
                 </span>
-              </div>
-              <button
-                type="button"
-                onClick={logout}
-                title="Sign out"
-                className="flex items-center gap-1.5 rounded-full border border-neutral-200/70 bg-white/70 px-3 py-1.5 text-xs font-semibold text-neutral-600 transition-colors hover:border-red-300 hover:text-red-600 dark:border-neutral-700/50 dark:bg-neutral-900/70 dark:text-neutral-400 dark:hover:text-red-400"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-                Sign out
+                <ChevronDown className={`h-3 w-3 text-neutral-400 transition-transform ${menuOpen ? 'rotate-180' : ''}`} />
               </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-xl border border-neutral-200/70 bg-white shadow-lg dark:border-neutral-700/50 dark:bg-neutral-900">
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm text-neutral-700 transition-colors hover:bg-gold-50 hover:text-gold-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-gold-300"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                  <div className="mx-3 h-px bg-neutral-100 dark:bg-neutral-800" />
+                  <button
+                    type="button"
+                    onClick={() => { setMenuOpen(false); logout(); }}
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950/30"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign out
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

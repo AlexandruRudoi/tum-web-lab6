@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => (isTokenValid() ? getTokenUser() : null));
   const [isLoading, setIsLoading] = useState(!isTokenValid());
   const refreshTimer = useRef(null);
+  const scheduleRefreshRef = useRef(null);
 
   // Schedule a silent visitor-token refresh (only for anonymous tokens).
   const scheduleRefresh = useCallback((expiresInSeconds) => {
@@ -18,16 +19,20 @@ export const AuthProvider = ({ children }) => {
         const data = await acquireToken('VISITOR');
         setRole('VISITOR');
         setUser(null);
-        scheduleRefresh(data.expiresInSeconds);
+        scheduleRefreshRef.current?.(data.expiresInSeconds);
       } catch {
         // API unreachable — keep current token until it hard-expires.
       }
     }, ms);
   }, []);
 
+  // Keep ref in sync with the stable callback (runs once; safe to read in timer callbacks)
+  useEffect(() => {
+    scheduleRefreshRef.current = scheduleRefresh;
+  }, [scheduleRefresh]);
+
   useEffect(() => {
     if (isTokenValid()) {
-      setIsLoading(false);
       return;
     }
     // Auto-acquire a visitor token on first load.

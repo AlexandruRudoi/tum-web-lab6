@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useCallback } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Scissors,
@@ -14,6 +14,7 @@ import {
   CheckCircle,
   XCircle,
   Trash2,
+  ArrowRight,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -29,8 +30,6 @@ import Button from '../components/common/Button';
 import { formatDate } from '../utils/date';
 import { fetchUsers, updateUserRole, deleteUser } from '../api/usersApi';
 import { useCanApproveBookings } from '../config/permissions';
-
-const BOOKING_STATUS = { PENDING: 'pending', CONFIRMED: 'confirmed', CANCELLED: 'cancelled' };
 
 const roleColors = {
   MANAGER: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30',
@@ -61,119 +60,18 @@ const StatCard = ({ icon: Icon, label, value, accent, to, viewLabel }) => (
   </Card>
 );
 
-// ── Bookings management panel (MANAGER + ADMIN) ────────────────────────────────
-const BookingsPanel = () => {
-  const { bookings, setBookingStatus } = useBookings();
-  const { services } = useServices();
-  const serviceMap = useMemo(
-    () => Object.fromEntries(services.map((s) => [s.id, s])),
-    [services],
-  );
-  const sorted = useMemo(
-    () => [...bookings].sort((a, b) => new Date(b.appointmentAt) - new Date(a.appointmentAt)),
-    [bookings],
-  );
-
-  const statusBadge = (status) => {
-    const map = {
-      pending:   'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-      confirmed: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-      cancelled: 'bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400',
-    };
-    return map[status] ?? 'bg-neutral-100 text-neutral-600';
-  };
-
-  return (
-    <Card className="p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <CalendarCheck className="h-5 w-5 text-gold-600 dark:text-gold-400" />
-        <h2 className="font-display text-2xl font-semibold text-neutral-900 dark:text-white">
-          Bookings Management
-        </h2>
-      </div>
-      <span className="mb-4 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
-
-      {sorted.length === 0 ? (
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">No bookings yet.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gold-200/50 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:border-gold-800/40 dark:text-neutral-400">
-                <th className="pb-3 pr-4">Client</th>
-                <th className="pb-3 pr-4">Service</th>
-                <th className="pb-3 pr-4">Date & Time</th>
-                <th className="pb-3 pr-4">Status</th>
-                <th className="pb-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gold-100/60 dark:divide-gold-900/30">
-              {sorted.map((b) => (
-                <tr key={b.id}>
-                  <td className="py-3 pr-4">
-                    <p className="font-medium text-neutral-800 dark:text-neutral-100">{b.clientName}</p>
-                    <p className="text-[11px] text-neutral-400">{b.clientEmail}</p>
-                  </td>
-                  <td className="py-3 pr-4 text-neutral-700 dark:text-neutral-300">
-                    {serviceMap[b.serviceId]?.name ?? '—'}
-                  </td>
-                  <td className="py-3 pr-4 text-neutral-600 dark:text-neutral-400">
-                    {b.date} · {b.time}
-                  </td>
-                  <td className="py-3 pr-4">
-                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${statusBadge(b.status)}`}>
-                      {b.status}
-                    </span>
-                  </td>
-                  <td className="py-3">
-                    <div className="flex items-center gap-1.5">
-                      {b.status !== BOOKING_STATUS.CONFIRMED && (
-                        <button
-                          type="button"
-                          onClick={() => setBookingStatus(b.id, BOOKING_STATUS.CONFIRMED)}
-                          title="Confirm"
-                          className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-emerald-600 transition-colors hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
-                        >
-                          <CheckCircle className="h-3.5 w-3.5" /> Confirm
-                        </button>
-                      )}
-                      {b.status !== BOOKING_STATUS.CANCELLED && (
-                        <button
-                          type="button"
-                          onClick={() => setBookingStatus(b.id, BOOKING_STATUS.CANCELLED)}
-                          title="Cancel"
-                          className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-red-500 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
-                        >
-                          <XCircle className="h-3.5 w-3.5" /> Cancel
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </Card>
-  );
-};
-
 // ── Users management panel (ADMIN only) ───────────────────────────────────────
 const UsersPanel = () => {
   const [users, setUsers] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  const load = useCallback(async () => {
-    try {
-      const data = await fetchUsers();
-      setUsers(data);
-    } catch {
-      // ignore auth errors (shouldn't reach here)
-    }
+  useEffect(() => {
+    let cancelled = false;
+    fetchUsers()
+      .then((data) => { if (!cancelled) setUsers(data); })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
-
-  useEffect(() => { load(); }, [load]);
 
   const handleRoleChange = async (id, role) => {
     setBusy(true);
@@ -382,7 +280,7 @@ const DashboardPage = () => {
         <StatCard icon={Scissors} label={t('dashboard.stats.services')} value={services.length} accent="text-neutral-900 dark:text-white" to="/services" viewLabel={view} />
         <StatCard icon={ShoppingBag} label={t('dashboard.stats.products')} value={products.length} accent="text-neutral-900 dark:text-white" to="/products" viewLabel={view} />
         <StatCard icon={Newspaper} label={t('dashboard.stats.news')} value={news.length} accent="text-neutral-900 dark:text-white" to="/news" viewLabel={view} />
-        <StatCard icon={CalendarCheck} label={t('dashboard.stats.bookings')} value={bookings.length} accent="text-neutral-900 dark:text-white" to="/booking" viewLabel={view} />
+        <StatCard icon={CalendarCheck} label={t('dashboard.stats.bookings')} value={bookings.length} accent="text-neutral-900 dark:text-white" to="/manage-bookings" viewLabel={view} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -402,7 +300,7 @@ const DashboardPage = () => {
               </h2>
               <span className="mt-1 block h-px w-12 bg-gradient-to-r from-gold-400 to-transparent" />
             </div>
-            <Link to="/booking">
+            <Link to="/manage-bookings">
               <Button variant="outline" size="sm">{t('common.viewAll')}</Button>
             </Link>
           </div>
@@ -509,10 +407,29 @@ const DashboardPage = () => {
         </Card>
       </div>
 
-      {/* MANAGER + ADMIN: Bookings management */}
+      {/* MANAGER + ADMIN: Link to bookings management */}
       {canApprove && (
         <div className="mt-6">
-          <BookingsPanel />
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CalendarCheck className="h-5 w-5 text-gold-600 dark:text-gold-400" />
+                <div>
+                  <h2 className="font-display text-xl font-semibold text-neutral-900 dark:text-white">
+                    Bookings Management
+                  </h2>
+                  <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
+                    {stats.pending} pending · {stats.confirmed} confirmed
+                  </p>
+                </div>
+              </div>
+              <Link to="/manage-bookings">
+                <Button variant="outline" size="sm">
+                  Manage <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </Card>
         </div>
       )}
 

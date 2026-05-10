@@ -12,6 +12,7 @@ const fromDto = (dto) => {
   return {
     id: dto.id,
     clientName: dto.clientName,
+    clientEmail: dto.clientEmail ?? '',
     phone: dto.clientPhone,
     serviceId: dto.serviceId,
     date,
@@ -36,6 +37,8 @@ export const bookingsApi = {
     const paged = await api.get(`/bookings?limit=${limit}&offset=${offset}`);
     return paged.items.map(fromDto);
   },
+
+  getById: async (id) => fromDto(await api.get(`/bookings/${id}`)),
 
   create: async (data) => fromDto(await api.post('/bookings', toCreateDto(data))),
 
