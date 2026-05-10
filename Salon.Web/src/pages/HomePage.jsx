@@ -17,7 +17,7 @@ const HomePage = () => {
 
   const featuredServices = useMemo(() => services.slice(0, 3), [services]);
   const featuredProducts = useMemo(
-    () => [...products].filter((p) => p.stock > 0).slice(0, 3),
+    () => products.slice(0, 3),
     [products],
   );
   const latestNews = useMemo(

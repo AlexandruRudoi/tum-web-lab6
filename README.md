@@ -1,9 +1,9 @@
-# TUM Web — Lab 6 · HAPPINESS Beauty Salon
+# TUM Web — Lab 7 · HAPPINESS Beauty Salon
 
-Client-side web application for a beauty salon, built as the cumulative lab assignment
+Full-stack web application for a beauty salon, built as the cumulative lab assignment
 for the **TUM · Web Programming** course.
 
-The repository will hold both the front-end and (later) the back-end of the project.
+The repository contains both the React front-end (`Salon.Web`) and the ASP.NET Core 9 back-end (`Salon.Api`).
 
 ---
 
@@ -27,23 +27,29 @@ underlying content.
 - **Light / dark theme** with brand gold-accented palette.
 - **EN / RO localization** with a language switcher and persistent preference.
 
-### Manager features (gated by a `CAN_MANAGE` flag)
+### Staff features (Manager / Admin roles)
 
+- **Login page** at `/login` with JWT-based authentication.
+- **Dashboard** with entity counts, upcoming bookings, low-stock alerts and recent news.
+- **Booking management** (`/manage-bookings`) — confirm, cancel or delete appointments.
 - Create / edit / delete services, products and news.
-- Dashboard with counts and quick links.
-- Pinning news, liking entities, all persisted in `localStorage`.
+- Pinning news, liking entities.
+
+### Visitor booking persistence
+
+- Visitor (unauthenticated) bookings are stored in `localStorage`.
+- On page load, each stored booking is synced against the API so status changes made by staff are reflected in real time.
+- If a booking is deleted by staff the entry is removed from `localStorage` automatically.
 
 ### Accessibility
 
 - Integrated **tabnav** WCAG accessibility widget styled with the brand color.
-- Semantic HTML, keyboard-friendly controls and screen-reader labels for icon
-  buttons.
+- Semantic HTML, keyboard-friendly controls and screen-reader labels for icon buttons.
 
 ### Persistence
 
-- All entity state, favorites, language and theme preferences are persisted in the
-  browser via `localStorage`. There is no backend yet — everything runs offline
-  after the first load.
+- Entity state is fetched from the API (PostgreSQL backend).
+- Language and theme preferences are persisted in `localStorage`.
 
 ---
 
@@ -58,8 +64,9 @@ underlying content.
 | i18n             | **i18next** + `react-i18next` + `i18next-browser-languagedetector`  |
 | Icons            | **lucide-react** + inline SVGs                                      |
 | Notifications    | **react-toastify**                                                  |
-| Persistence      | `localStorage`                                                      |
-| Container        | Multi-stage **Docker** build → **nginx 1.27**                       |
+| Auth             | **JWT Bearer** (ASP.NET Core) + `localStorage` token cache          |
+| Persistence      | **PostgreSQL 17** via EF Core 9 + Npgsql                            |
+| Container        | Multi-stage **Docker** build — API (`dotnet/aspnet:9.0`) + Web (`nginx 1.27`) |
 
 ---
 
@@ -67,29 +74,31 @@ underlying content.
 
 ```
 tum-web-lab6/
-├── Salon.Web/                  # React + Vite front-end
-│   ├── public/
-│   │   └── images/             # local service / product / news photos
+├── Salon.Api/                  # ASP.NET Core 9 Web API
+│   ├── Controllers/            # AuthController, BookingsController, …
+│   ├── Dtos/                   # request/response DTOs + mappers
+│   ├── Program.cs              # DI, JWT, CORS, Swagger, auto-migrate & seed
+│   └── Dockerfile              # multi-stage SDK build → aspnet:9.0 runtime
+├── Salon.Domain/               # entities, enums, interfaces
+├── Salon.Postgres/             # EF Core DbContext, migrations, seeders, repos
+├── Salon.Repositories/         # repository interfaces
+├── Salon.Services/             # business logic services
+├── Salon.Tests/                # xUnit test project
+├── Salon.Web/                  # React 19 + Vite front-end
+│   ├── public/images/          # local service / product / news photos
 │   ├── src/
-│   │   ├── assets/             # logo, fonts, static svgs
+│   │   ├── api/                # typed API clients (client.js, bookingsApi.js, …)
 │   │   ├── components/         # UI building blocks (cards, layout, common)
-│   │   ├── context/            # ServicesProvider, ProductsProvider, NewsProvider…
-│   │   ├── data/seed/          # initial in-memory seed for entities
-│   │   ├── hooks/              # useEntityState, useTranslateService…
-│   │   ├── i18n/locales/       # en.json, ro.json
-│   │   ├── pages/              # route-level pages (Home, Services, Contact…)
+│   │   ├── context/            # AuthProvider, ServicesProvider, …
+│   │   ├── pages/              # route-level pages
 │   │   ├── router/             # react-router config
-│   │   ├── theme/              # design tokens + useTheme
-│   │   ├── utils/              # helpers (id, date, translateService…)
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css           # Tailwind v4 theme tokens
+│   │   └── i18n/locales/       # en.json, ro.json
 │   ├── Dockerfile              # Node build → nginx serve
-│   ├── nginx.conf              # SPA fallback, gzip, security headers, /healthz
-│   └── README.md
-├── docker-compose.dev.yml      # hot-reload dev server (port 5173)
+│   └── nginx.conf              # SPA fallback, /api proxy, gzip, /healthz
+├── .env.example                # required env vars for prod
+├── docker-compose.dev.yml      # Vite dev server (port 5173)
 ├── docker-compose.staging.yml  # nginx image, port 8080
-├── docker-compose.prod.yml     # nginx image, port 80, resource limits
+├── docker-compose.prod.yml     # postgres + api + web, port 80
 └── README.md                   # this file
 ```
 
@@ -132,21 +141,30 @@ docker compose -f docker-compose.staging.yml up --build -d
 # open http://localhost:8080
 ```
 
-### Production build
+### Production build (full stack)
 
 ```bash
-docker compose -f docker-compose.prod.yml up --build -d
+# 1. Create .env from the template and fill in secrets
+cp .env.example .env
+
+# 2. Start only Postgres first (run migrations before the API)
+docker compose -f docker-compose.prod.yml up -d postgres
+
+# 3. Run EF Core migrations
+dotnet ef database update --project Salon.Postgres --startup-project Salon.Api
+
+# 4. Build and start everything
+docker compose -f docker-compose.prod.yml up -d --build
 # open http://localhost
 ```
 
-The image is a multi-stage build: stage 1 compiles the Vite app inside
-`node:20-alpine`, stage 2 copies `dist/` into `nginx:1.27-alpine` and serves it
-with an SPA fallback (`try_files $uri $uri/ /index.html`), gzip, security
-headers and a `/healthz` endpoint used by the container healthcheck.
+The compose stack runs three services: `postgres` (PostgreSQL 17), `api`
+(ASP.NET Core 9, port 8080 internal) and `web` (nginx 1.27, port 80 public).
+nginx proxies `/api/*` requests to the API container and serves the Vite SPA
+for all other routes.
 
 > Only one of staging (`8080:80`) and prod (`80:80`) can run at a time on the
-> same host because the container always listens on port 80 internally and the
-> compose files differ in the host-port mapping.
+> same host because the web container always listens on port 80 internally.
 
 ---
 
@@ -158,7 +176,7 @@ headers and a `/healthz` endpoint used by the container healthcheck.
   - `feat/remaining-pages`
   - `chore/scaffold-frontend`
   - `fix/booking-form-validation`
-  - `lab-6` — branch holding the consolidated work for this lab.
+  - `lab-7` — branch holding the consolidated work for this lab.
 - Commit messages follow **Conventional Commits** (`feat:`, `chore:`, `fix:`,
   `style:`, `docs:`, `refactor:`).
 - Each major feature lives on its own branch, gets pushed and is merged into
