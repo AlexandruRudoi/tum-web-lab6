@@ -10,6 +10,8 @@ import ContactPage from '../pages/ContactPage';
 import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
+import ManageBookingsPage from '../pages/ManageBookingsPage';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -20,6 +22,7 @@ export const router = createBrowserRouter([
       { path: 'products', element: <ProductsPage /> },
       { path: 'news', element: <NewsPage /> },
       { path: 'booking', element: <BookingPage /> },
+      { path: 'manage-bookings', element: <ManageBookingsPage /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'contact', element: <ContactPage /> },
       { path: 'login', element: <LoginPage /> },

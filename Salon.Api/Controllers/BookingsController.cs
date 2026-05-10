@@ -19,9 +19,8 @@ public class BookingsController : ControllerBase
     public async Task<IActionResult> GetAll([FromQuery] int limit = 20, [FromQuery] int offset = 0)
         => Ok((await _svc.GetAllAsync(limit, offset)).ToPagedDto(b => b.ToDto()));
 
-    /// <summary>Get a booking by ID. Requires appointments:manage permission.</summary>
+    /// <summary>Get a booking by ID. Public — visitors can check the status of their own booking.</summary>
     [HttpGet("{id:guid}")]
-    [Authorize(Policy = "CanManageAppointments")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var booking = await _svc.GetByIdAsync(id);

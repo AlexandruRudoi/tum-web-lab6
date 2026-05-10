@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CalendarPlus, Clock, User, Phone, Trash2, CheckCircle2, XCircle } from 'lucide-react';
+import { CalendarPlus, Clock, User, Phone, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import { useBookings, useServices } from '../context/useEntityContexts';
-import { useCanApproveBookings } from '../config/permissions';
+import { useAuth, useBookings, useServices } from '../context/useEntityContexts';
+import { bookingsApi } from '../api/bookingsApi';
 import { translateService } from '../i18n/translateEntity';
 import { BOOKING_STATUS } from '../data/entities';
 import Card from '../components/common/Card';
@@ -12,6 +12,19 @@ import Button from '../components/common/Button';
 import EmptyState from '../components/common/EmptyState';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import { formatDate } from '../utils/date';
+
+const LOCAL_BOOKINGS_KEY = 'myBookings';
+const getLocalBookings = () => {
+  try { return JSON.parse(localStorage.getItem(LOCAL_BOOKINGS_KEY) ?? '[]'); }
+  catch { return []; }
+};
+const saveLocalBooking = (booking) => {
+  const list = getLocalBookings();
+  localStorage.setItem(LOCAL_BOOKINGS_KEY, JSON.stringify([booking, ...list.filter((b) => b.id !== booking.id)]));
+};
+const removeLocalBookingById = (id) => {
+  localStorage.setItem(LOCAL_BOOKINGS_KEY, JSON.stringify(getLocalBookings().filter((b) => b.id !== id)));
+};
 
 const statusStyles = {
   pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200',
@@ -24,10 +37,39 @@ const todayIso = () => new Date().toISOString().slice(0, 10);
 
 const BookingPage = () => {
   const { services } = useServices();
-  const { bookings, addBooking, removeBooking, setBookingStatus } = useBookings();
-  const canApprove = useCanApproveBookings();
+  const { user } = useAuth();
+  const { bookings, addBooking, removeBooking } = useBookings();
   const [params, setParams] = useSearchParams();
   const { t } = useTranslation();
+  const [localBookings, setLocalBookings] = useState(getLocalBookings);
+
+  // Sync visitor bookings status from server on mount.
+  useEffect(() => {
+    if (user) return;
+    const stored = getLocalBookings();
+    if (stored.length === 0) return;
+    Promise.allSettled(stored.map((b) => bookingsApi.getById(b.id))).then((results) => {
+      let changed = false;
+      const updated = [];
+      stored.forEach((b, i) => {
+        const r = results[i];
+        if (r.status === 'rejected' && r.reason?.status === 404) {
+          // Booking was deleted on the server — drop it from local storage.
+          changed = true;
+        } else if (r.status === 'fulfilled' && r.value.status !== b.status) {
+          // Status changed (e.g. confirmed/cancelled by staff).
+          changed = true;
+          updated.push({ ...b, status: r.value.status });
+        } else {
+          updated.push(b);
+        }
+      });
+      if (changed) {
+        localStorage.setItem(LOCAL_BOOKINGS_KEY, JSON.stringify(updated));
+        setLocalBookings(updated);
+      }
+    });
+  }, [user]);
 
   const [form, setForm] = useState(() => {
     const sid = params.get('serviceId');
@@ -42,6 +84,7 @@ const BookingPage = () => {
     };
   });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
@@ -62,37 +105,57 @@ const BookingPage = () => {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    const booking = addBooking({
-      clientName: form.clientName.trim(),
-      phone: form.phone.trim(),
-      serviceId: form.serviceId,
-      date: form.date,
-      time: form.time,
-      notes: form.notes.trim(),
-    });
-    toast.success(t('booking.requested', { name: booking.clientName }));
-    setForm((f) => ({ ...f, clientName: '', phone: '', notes: '' }));
-    if (params.get('serviceId')) setParams({});
+    setLoading(true);
+    try {
+      const booking = await addBooking({
+        clientName: form.clientName.trim(),
+        phone: form.phone.trim(),
+        serviceId: form.serviceId,
+        date: form.date,
+        time: form.time,
+        notes: form.notes.trim(),
+      });
+      toast.success(t('booking.requested', { name: booking.clientName }));
+      if (!user) {
+        saveLocalBooking(booking);
+        setLocalBookings(getLocalBookings());
+      }
+      setForm((f) => ({ ...f, clientName: '', phone: '', notes: '' }));
+      if (params.get('serviceId')) setParams({});
+    } catch {
+      toast.error(t('booking.errorSubmit') ?? 'Failed to submit booking. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleRemoveConfirm = () => {
+  const handleRemoveConfirm = async () => {
     if (!pendingDelete) return;
-    removeBooking(pendingDelete.id);
-    toast.info(t('booking.removed'));
+    try {
+      await removeBooking(pendingDelete.id);
+      if (!user) {
+        removeLocalBookingById(pendingDelete.id);
+        setLocalBookings(getLocalBookings());
+      }
+      toast.info(t('booking.removed'));
+    } catch {
+      toast.error(t('booking.errorRemove') ?? 'Failed to remove booking.');
+    }
   };
 
-  const sortedBookings = useMemo(
-    () =>
-      [...bookings].sort((a, b) => {
-        const da = `${a.date}T${a.time}`;
-        const db = `${b.date}T${b.time}`;
-        return db.localeCompare(da);
-      }),
-    [bookings],
-  );
+  const myBookings = useMemo(() => {
+    const visible = user
+      ? bookings.filter((b) => b.clientEmail === user.email)
+      : localBookings;
+    return [...visible].sort((a, b) => {
+      const da = `${a.date}T${a.time}`;
+      const db = `${b.date}T${b.time}`;
+      return db.localeCompare(da);
+    });
+  }, [bookings, user, localBookings]);
 
   const inputClass =
     'w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-gold-400 focus:ring-2 focus:ring-gold-100 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:focus:ring-gold-900/40';
@@ -212,7 +275,7 @@ const BookingPage = () => {
             {t('booking.yourBookings')}
           </h2>
 
-          {sortedBookings.length === 0 ? (
+          {myBookings.length === 0 ? (
             <EmptyState
               icon={CalendarPlus}
               title={t('booking.emptyTitle')}
@@ -220,7 +283,7 @@ const BookingPage = () => {
             />
           ) : (
             <div className="space-y-4">
-              {sortedBookings.map((b) => {
+              {myBookings.map((b) => {
                 const svc = serviceMap[b.serviceId];
                 const tsvc = svc ? translateService(svc, t) : null;
                 return (
@@ -261,28 +324,6 @@ const BookingPage = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-1">
-                        {canApprove && b.status !== BOOKING_STATUS.CONFIRMED && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setBookingStatus(b.id, BOOKING_STATUS.CONFIRMED)}
-                            aria-label={t('booking.confirmAria')}
-                            className="text-emerald-600 hover:text-emerald-700"
-                          >
-                            <CheckCircle2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {canApprove && b.status !== BOOKING_STATUS.CANCELLED && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setBookingStatus(b.id, BOOKING_STATUS.CANCELLED)}
-                            aria-label={t('booking.cancelAria')}
-                            className="text-amber-600 hover:text-amber-700"
-                          >
-                            <XCircle className="h-4 w-4" />
-                          </Button>
-                        )}
                         <Button
                           variant="ghost"
                           size="icon"
